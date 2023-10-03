@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class TaskSchedulerApplication
 
 fun main(args: Array<String>) {
-	runApplication<TaskSchedulerApplication>(*args)
+    runApplication<TaskSchedulerApplication>(*args)
 }
