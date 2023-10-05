@@ -1,5 +1,6 @@
 package com.codersergg.taskscheduler.service
 
+import com.codersergg.taskscheduler.model.OwnerRequest
 import com.codersergg.taskscheduler.model.TaskRequestToCreate
 import com.codersergg.taskscheduler.model.TaskResponse
 import org.assertj.core.api.Assertions
@@ -25,7 +26,7 @@ internal class TaskServiceTest(@Autowired val taskService: TaskService) {
 
             // then
             Assertions.assertThat(findById.id).isEqualTo(1)
-            Assertions.assertThat(findById.taskName).isEqualTo("task name 1")
+            Assertions.assertThat(findById.owner.name).isEqualTo("task name 1")
             org.junit.jupiter.api.Assertions.assertNotNull(findById.lastRun)
         }
     }
@@ -55,14 +56,15 @@ internal class TaskServiceTest(@Autowired val taskService: TaskService) {
         @Test
         fun `should return TaskResponse`() {
             // given
-            val task = TaskRequestToCreate("new task name")
+            val owner = OwnerRequest(3, "new task name")
+            val task = TaskRequestToCreate(owner)
 
             // when
             val taskResponse: TaskResponse = taskService.createTask(task)
 
             // then
             Assertions.assertThat(taskResponse).isNotNull
-            Assertions.assertThat(taskResponse.taskName).isEqualTo("new task name")
+            Assertions.assertThat(taskResponse.owner.name).isEqualTo("task name 3")
 
         }
     }

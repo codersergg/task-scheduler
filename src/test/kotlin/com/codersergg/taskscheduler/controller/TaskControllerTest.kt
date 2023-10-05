@@ -1,5 +1,6 @@
 package com.codersergg.taskscheduler.controller
 
+import com.codersergg.taskscheduler.model.OwnerRequest
 import com.codersergg.taskscheduler.model.TaskRequestToCreate
 import com.codersergg.taskscheduler.model.TaskRequestToUpdate
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -36,7 +37,7 @@ internal class TaskControllerTest
                     status { isOk() }
                     content { contentType(MediaType.APPLICATION_JSON) }
                     jsonPath("$[0].id") { value("1") }
-                    jsonPath("$[0].task_name") { value("task name 1") }
+                    jsonPath("$[0].owner.name") { value("task name 1") }
                     jsonPath("$[0].last_run") { isNotEmpty() }
                 }
         }
@@ -55,14 +56,14 @@ internal class TaskControllerTest
                     status { isOk() }
                     content { contentType(MediaType.APPLICATION_JSON) }
                     jsonPath("$.id") { value(1L) }
-                    jsonPath("$.task_name") { value("task name 1") }
+                    jsonPath("$.owner.name") { value("task name 1") }
                     jsonPath("$.last_run") { isNotEmpty() }
                 }
         }
 
         @Test
         fun `should return Not Found`() {
-            mockMvc.get("/api/task/5") {
+            mockMvc.get("/api/task/100") {
                 contentType = MediaType.APPLICATION_JSON
             }.andDo { print() }
                 .andExpect {
@@ -80,7 +81,8 @@ internal class TaskControllerTest
         @Test
         fun `should add Task`() {
             // given
-            val task = TaskRequestToCreate("new task name")
+            val owner3 = OwnerRequest(3, "task name 3")
+            val task = TaskRequestToCreate(owner3)
 
             // when
             val postRequest = mockMvc.post("/api/task") {
@@ -96,8 +98,8 @@ internal class TaskControllerTest
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                     }
-                    jsonPath("$.id") { value(4) }
-                    jsonPath("$.task_name") { value("new task name") }
+                    jsonPath("$.id") { value(6) }
+                    jsonPath("$.owner.name") { value("task name 3") }
                     jsonPath("$.last_run") { isNotEmpty() }
                 }
         }
@@ -111,7 +113,8 @@ internal class TaskControllerTest
         fun `should update Task`() {
             // given
             val taskId: Long = 1
-            val task = TaskRequestToUpdate(taskId, "task name will not be updated")
+            val owner = OwnerRequest(100, "task name will not be updated")
+            val task = TaskRequestToUpdate(taskId, owner)
 
             // when
             val putRequest =
@@ -138,7 +141,7 @@ internal class TaskControllerTest
                     status { isOk() }
                     content { contentType(MediaType.APPLICATION_JSON) }
                     jsonPath("$.id") { value(taskId) }
-                    jsonPath("$.task_name") { value("task name 1") }
+                    jsonPath("$.owner.name") { value("task name 1") }
                     jsonPath("$.last_run") { isNotEmpty() }
                 }
         }

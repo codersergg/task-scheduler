@@ -38,8 +38,11 @@ dependencies {
 	// serialization
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-	// db
+	// db, jpa
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen:6.3.0.Final")
+	implementation("org.hibernate.validator:hibernate-validator:8.0.0.Final")
+	implementation("io.agroal:agroal-pool:2.1")
 	runtimeOnly("com.h2database:h2")
 	runtimeOnly("org.postgresql:postgresql")
 	//implementation("org.flywaydb:flyway-core")

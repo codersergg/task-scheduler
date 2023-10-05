@@ -1,6 +1,8 @@
 package com.codersergg.taskscheduler.configuration
 
+import com.codersergg.taskscheduler.model.Owner
 import com.codersergg.taskscheduler.model.Task
+import com.codersergg.taskscheduler.repository.OwnerRepository
 import com.codersergg.taskscheduler.repository.TaskRepository
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Bean
@@ -12,10 +14,17 @@ import java.time.Instant
 class ConfigurationTest {
     @Bean
     fun databaseInitializerTest(
+        ownerRepository: OwnerRepository,
         taskRepository: TaskRepository
     ) = ApplicationRunner {
-        taskRepository.save(Task("task name 1", Timestamp.from(Instant.now())))
-        taskRepository.save(Task("task name 2", Timestamp.from(Instant.now())))
-        taskRepository.save(Task("task name 3", Timestamp.from(Instant.now())))
+        val owner1 = ownerRepository.save(Owner("task name 1"))
+        val owner2 = ownerRepository.save(Owner("task name 2"))
+        val owner3 = ownerRepository.save(Owner("task name 3"))
+
+        taskRepository.save(Task(owner1, Instant.now()))
+        taskRepository.save(Task(owner1, Instant.now()))
+        taskRepository.save(Task(owner1, Instant.now()))
+        taskRepository.save(Task(owner2, Instant.now()))
+        taskRepository.save(Task(owner3, Instant.now()))
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 import java.sql.Timestamp
+import java.time.Instant
 
 @Repository
 interface TaskRepository : JpaRepository<Task, Long> {
@@ -15,5 +16,5 @@ interface TaskRepository : JpaRepository<Task, Long> {
     @Transactional
     @Modifying
     @Query("update Task t set t.lastRun = ?2 where t.id = ?1")
-    fun update(id: Long, lastRun: Timestamp): Int
+    fun update(id: Long, lastRun: Instant): Int
 }
