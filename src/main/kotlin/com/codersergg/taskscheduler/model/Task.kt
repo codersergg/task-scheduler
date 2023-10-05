@@ -24,11 +24,11 @@ class Task(
 ) : BaseEntity<Long>() {
 
     fun toTaskResponse(): TaskResponse {
-        return TaskResponse(id!!, owner.toOwnerResponseLazy(), convertInstantToString(lastRun))
+        return TaskResponse(id!!, owner.toOwnerResponse(), convertInstantToString(lastRun))
     }
 
-    fun toTaskResponseGraph(): TaskResponseGraph {
-        return TaskResponseGraph(id!!, convertInstantToString(lastRun))
+    fun toTaskResponseGraph(): TaskResponseWithTask {
+        return TaskResponseWithTask(id!!, convertInstantToString(lastRun))
     }
 
     private fun convertInstantToString(instant: Instant): String {
@@ -71,12 +71,12 @@ data class TaskResponse(
     @JsonProperty("id")
     val id: Long,
     @JsonProperty("owner")
-    var owner: OwnerResponseLazy,
+    var owner: OwnerResponse,
     @JsonProperty("last_run")
     var lastRun: String,
 ) : Serializable
 
-data class TaskResponseGraph(
+data class TaskResponseWithTask(
     @JsonProperty("id")
     val id: Long,
     @JsonProperty("last_run")

@@ -14,20 +14,16 @@ class Owner(
     @NaturalId
     var name: String,
     @OneToMany(mappedBy = "owner")
-    var task: MutableList<Task> = mutableListOf(),
+    var tasks: MutableList<Task> = mutableListOf(),
     @Version
     var lastUpdated: LocalDateTime = LocalDateTime.now()
 ) : BaseEntity<Long>(), Serializable {
     fun toOwnerResponse(): OwnerResponse {
-        return OwnerResponse(id!!, name, task.map { it.toTaskResponse() })
+        return OwnerResponse(id!!, name)
     }
 
-    fun toOwnerResponseLazy(): OwnerResponseLazy {
-        return OwnerResponseLazy(id!!, name)
-    }
-
-    fun toOwnerResponseGraph(): OwnerResponseGraph {
-        return OwnerResponseGraph(id!!, name, task.map { it.toTaskResponseGraph() })
+    fun toOwnerResponseWithTask(): OwnerResponseWithTask {
+        return OwnerResponseWithTask(id!!, name, tasks.map { it.toTaskResponseGraph() })
     }
 
     fun toOwnerRequest(): OwnerRequest {
@@ -60,20 +56,12 @@ data class OwnerResponse(
     val id: Long,
     @JsonProperty("name")
     var name: String,
-    val tasks: List<TaskResponse>
 ) : Serializable
 
-data class OwnerResponseLazy(
+data class OwnerResponseWithTask(
     @JsonProperty("id")
     val id: Long,
     @JsonProperty("name")
     var name: String,
-) : Serializable
-
-data class OwnerResponseGraph(
-    @JsonProperty("id")
-    val id: Long,
-    @JsonProperty("name")
-    var name: String,
-    val tasks: List<TaskResponseGraph>
+    val tasks: List<TaskResponseWithTask>
 ) : Serializable

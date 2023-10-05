@@ -1,49 +1,48 @@
 package com.codersergg.taskscheduler.service
 
 import com.codersergg.taskscheduler.model.*
-import com.codersergg.taskscheduler.repository.OwnerRepository
 import jakarta.persistence.EntityManagerFactory
+import org.hibernate.Session
 import org.hibernate.SessionFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 import org.springframework.stereotype.Service
 
 
 @Service
-class OwnerService(
-    @Autowired private val ownerRepository: OwnerRepository,
-    @Autowired private val factory: EntityManagerFactory
-) {
-
-    fun sessionFactory(): SessionFactory {
-        return factory as SessionFactory
+class OwnerService(private val factory: EntityManagerFactory) {
+    fun session(): Session {
+        factory as SessionFactory
+        return factory.openSession()
     }
 
     fun entityManagerFactory(): EntityManagerFactory {
         return factory
     }
 
-    fun getOwner(id: Long): OwnerResponseLazy {
-        return sessionFactory().openSession().find(Owner::class.java, id)?.toOwnerResponseLazy()
-            ?: throw NotFoundException()
-    }
-
-    fun getOwnerWithTasks(id: Long): OwnerResponseGraph {
-        val createEntityGraph = sessionFactory().openSession()
-            .createEntityGraph(Owner::class.java)
-
-        return createEntityGraph
-            .addSubgraph(Owner_.task)
-
-            .find(Owner::class.java, id)?.toOwnerResponseLazy()
-            ?: throw NotFoundException()
-    }
-
     fun getAllOwners(): List<OwnerResponse> {
-        return listOf()
+        return session().createSelectionQuery("SELECT o FROM Owner o", Owner::class.java)
+            .resultList
+            .map { it.toOwnerResponse() }
     }
 
-    fun getAllOwnersGraph(): List<OwnerResponseGraph> {
-        return ownerRepository.findAllByOrderById().map { it.toOwnerResponseGraph() }
+    fun getAllOwnersWithTask(): List<OwnerResponseWithTask> {
+        val graph = session().createEntityGraph(Owner::class.java)
+        graph.addPluralSubgraph(Owner_.tasks).addSubgraph(Task_.owner)
+        val query = session().createSelectionQuery("SELECT o FROM Owner o", Owner::class.java)
+        return query.setHint("javax.persistence.fetchgraph", graph)
+            .resultList
+            .map { it.toOwnerResponseWithTask() }
+    }
+
+    fun getOwner(id: Long): OwnerResponse {
+        return session().find(Owner::class.java, id)?.toOwnerResponse()
+            ?: throw NotFoundException()
+    }
+
+    fun getOwnerWithTasks(id: Long): OwnerResponseWithTask {
+        val graph = session().createEntityGraph(Owner::class.java)
+        graph.addPluralSubgraph(Owner_.tasks).addSubgraph(Task_.owner)
+        return session().byId(Owner::class.java).withFetchGraph(graph).load(id)?.toOwnerResponseWithTask()
+            ?: throw NotFoundException()
     }
 }

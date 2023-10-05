@@ -12,7 +12,6 @@ import java.util.*
 @RestController
 @RequestMapping("api/task")
 class TaskController(private val taskService: TaskService) {
-
     @ExceptionHandler(NoSuchElementException::class)
     fun handleNotFound(e: NoSuchElementException): ResponseEntity<String> =
         ResponseEntity(e.message, HttpStatus.NOT_FOUND)
@@ -20,7 +19,6 @@ class TaskController(private val taskService: TaskService) {
     @ExceptionHandler(IllegalArgumentException::class)
     fun handleBadRequest(e: IllegalArgumentException): ResponseEntity<String> =
         ResponseEntity(e.message, HttpStatus.BAD_REQUEST)
-
     @GetMapping
     fun getAllTask(): List<TaskResponse> = taskService.getAllTasks()
 

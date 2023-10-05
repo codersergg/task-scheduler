@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 class TaskService(
     private val ownerRepository: OwnerRepository,
     private val taskRepository: TaskRepository
-    ) {
+) {
 
     fun getAllTasks(): List<TaskResponse> {
         return taskRepository.findAllByOrderById().map { it.toTaskResponse() }

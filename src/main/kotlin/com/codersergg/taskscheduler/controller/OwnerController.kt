@@ -1,25 +1,32 @@
 package com.codersergg.taskscheduler.controller
 
 import com.codersergg.taskscheduler.model.OwnerResponse
-import com.codersergg.taskscheduler.model.OwnerResponseGraph
-import com.codersergg.taskscheduler.model.OwnerResponseLazy
+import com.codersergg.taskscheduler.model.OwnerResponseWithTask
 import com.codersergg.taskscheduler.service.OwnerService
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("api/owner")
 class OwnerController(private val ownerService: OwnerService) {
+    @ExceptionHandler(NoSuchElementException::class)
+    fun handleNotFound(e: NoSuchElementException): ResponseEntity<String> =
+        ResponseEntity(e.message, HttpStatus.NOT_FOUND)
+
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handleBadRequest(e: IllegalArgumentException): ResponseEntity<String> =
+        ResponseEntity(e.message, HttpStatus.BAD_REQUEST)
+
     @GetMapping
     fun getAllOwner(): List<OwnerResponse> = ownerService.getAllOwners()
-    @GetMapping("/graph")
-    fun getAllOwnerGraph(): List<OwnerResponseGraph> = ownerService.getAllOwnersGraph()
+
+    @GetMapping("/task")
+    fun getAllOwnerWithTasks(): List<OwnerResponseWithTask> = ownerService.getAllOwnersWithTask()
 
     @GetMapping("/{id}")
-    fun getOwnerH(@PathVariable id: Long): OwnerResponseLazy = ownerService.getOwner(id)
+    fun getOwner(@PathVariable id: Long): OwnerResponse = ownerService.getOwner(id)
 
-    @GetMapping("/{id}/full")
-    fun getOwner(@PathVariable id: Long): OwnerResponseGraph = ownerService.getOwnerWithTasks(id)
+    @GetMapping("/{id}/task")
+    fun getOwnerWithTask(@PathVariable id: Long): OwnerResponseWithTask = ownerService.getOwnerWithTasks(id)
 }

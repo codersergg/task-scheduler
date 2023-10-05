@@ -1,20 +1,16 @@
 package com.codersergg.taskscheduler.configuration
 
-import com.codersergg.taskscheduler.model.Owner
-import com.codersergg.taskscheduler.model.Task
 import com.codersergg.taskscheduler.repository.OwnerRepository
 import com.codersergg.taskscheduler.repository.TaskRepository
-import jakarta.persistence.Persistence
-import org.hibernate.Session
-import org.hibernate.SessionFactory
-import org.hibernate.cfg.JdbcSettings.*
 import org.springframework.boot.ApplicationRunner
+import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.Bean
-import java.lang.Boolean.TRUE
-import java.time.Instant
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 
 
 @org.springframework.context.annotation.Configuration
+@EnableJpaRepositories("com.codersergg.taskscheduler.repository")
+@EntityScan("com.codersergg.taskscheduler.model")
 class Configuration {
     @Bean
     fun databaseInitializer(
