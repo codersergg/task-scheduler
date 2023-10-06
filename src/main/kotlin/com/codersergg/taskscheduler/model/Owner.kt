@@ -36,7 +36,7 @@ data class OwnerRequest(
     val id: Long,
     @JsonProperty("name")
     var name: String,
-) : Serializable {
+) : Serializable, Requestable {
     fun toOwner(): Owner {
         return Owner(name)
     }
@@ -45,7 +45,7 @@ data class OwnerRequest(
 data class OwnerRequestToAdd(
     @JsonProperty("name")
     var name: String,
-) : Serializable {
+) : Serializable, Requestable {
     fun toOwner(): Owner {
         return Owner(name)
     }
@@ -56,7 +56,7 @@ data class OwnerResponse(
     val id: Long,
     @JsonProperty("name")
     var name: String,
-) : Serializable
+) : Serializable, Responsible
 
 data class OwnerResponseWithTask(
     @JsonProperty("id")
@@ -64,4 +64,4 @@ data class OwnerResponseWithTask(
     @JsonProperty("name")
     var name: String,
     val tasks: List<TaskResponseWithTask>
-) : Serializable
+) : Serializable, Responsible

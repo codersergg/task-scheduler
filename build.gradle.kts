@@ -14,6 +14,26 @@ plugins {
 group = "com.codersergg"
 version = "0.0.1-SNAPSHOT"
 
+buildscript {
+    repositories {
+        maven {
+            url = uri("https://plugins.gradle.org/m2/")
+        }
+    }
+    dependencies {
+        classpath("io.spring.gradle:dependency-management-plugin:1.1.3")
+    }
+}
+
+dependencyManagement {
+    dependencies {
+        dependency("io.micrometer:micrometer-observation:1.11.4")
+        dependency("io.micrometer:micrometer-commons:1.11.4")
+    }
+}
+
+apply(plugin = "io.spring.dependency-management")
+
 java {
     sourceCompatibility = JavaVersion.VERSION_17
 }
@@ -41,6 +61,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     // db, jpa
+    //implementation("org.hibernate.orm:hibernate-core:6.3.0.Final")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.hibernate.validator:hibernate-validator:8.0.0.Final")
     implementation("org.glassfish:jakarta.el:4.0.2")

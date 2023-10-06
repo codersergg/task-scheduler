@@ -98,7 +98,7 @@ internal class TaskControllerTest
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                     }
-                    jsonPath("$.id") { value(6) }
+                    jsonPath("$.id") { value(7) }
                     jsonPath("$.owner.name") { value("task name 3") }
                     jsonPath("$.last_run") { isNotEmpty() }
                 }
@@ -154,7 +154,17 @@ internal class TaskControllerTest
 
         @Test
         fun `should delete Task`() {
-            mockMvc.delete("/api/task/2") {
+
+            val owner2 = OwnerRequest(2, "task name 2")
+            val task = TaskRequestToCreate(owner2)
+
+            // when
+            mockMvc.post("/api/task") {
+                contentType = MediaType.APPLICATION_JSON
+                content = objectMapper.writeValueAsString(task)
+            }
+
+            mockMvc.delete("/api/task/6") {
                 contentType = MediaType.APPLICATION_JSON
             }.andDo { print() }
                 .andExpect {
