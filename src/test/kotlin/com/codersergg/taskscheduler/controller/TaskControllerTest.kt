@@ -37,8 +37,8 @@ internal class TaskControllerTest
                     status { isOk() }
                     content { contentType(MediaType.APPLICATION_JSON) }
                     jsonPath("$[0].id") { value("1") }
-                    jsonPath("$[0].owner.name") { value("task name 1") }
-                    jsonPath("$[0].last_run") { isNotEmpty() }
+                    jsonPath("$[0].provider.name") { value("task name 1") }
+                    jsonPath("$[0].lastRun") { isNotEmpty() }
                 }
         }
     }
@@ -56,8 +56,8 @@ internal class TaskControllerTest
                     status { isOk() }
                     content { contentType(MediaType.APPLICATION_JSON) }
                     jsonPath("$.id") { value(1L) }
-                    jsonPath("$.owner.name") { value("task name 1") }
-                    jsonPath("$.last_run") { isNotEmpty() }
+                    jsonPath("$.provider.name") { value("task name 1") }
+                    jsonPath("$.lastRun") { isNotEmpty() }
                 }
         }
 
@@ -99,8 +99,8 @@ internal class TaskControllerTest
                         contentType(MediaType.APPLICATION_JSON)
                     }
                     jsonPath("$.id") { value(7) }
-                    jsonPath("$.owner.name") { value("task name 3") }
-                    jsonPath("$.last_run") { isNotEmpty() }
+                    jsonPath("$.provider.name") { value("task name 3") }
+                    jsonPath("$.lastRun") { isNotEmpty() }
                 }
         }
     }
@@ -141,8 +141,8 @@ internal class TaskControllerTest
                     status { isOk() }
                     content { contentType(MediaType.APPLICATION_JSON) }
                     jsonPath("$.id") { value(taskId) }
-                    jsonPath("$.owner.name") { value("task name 1") }
-                    jsonPath("$.last_run") { isNotEmpty() }
+                    jsonPath("$.provider.name") { value("task name 1") }
+                    jsonPath("$.lastRun") { isNotEmpty() }
                 }
         }
     }

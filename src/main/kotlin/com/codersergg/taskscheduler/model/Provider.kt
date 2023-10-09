@@ -25,7 +25,7 @@ class Provider(
     }
 
     fun toProviderResponseWithTask(): ProviderWithTaskResponse {
-        return ProviderWithTaskResponse(id!!, name, tasks.map { it.toTaskResponseGraph() })
+        return ProviderWithTaskResponse(id!!, name, tasks.map { it.toTaskResponseWithTask() })
     }
 
     fun toOwnerRequest(): ProviderRequest {

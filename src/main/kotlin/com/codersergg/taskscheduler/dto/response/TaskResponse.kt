@@ -1,21 +1,19 @@
 package com.codersergg.taskscheduler.dto.response
 
 import com.codersergg.taskscheduler.dto.AbstractTask
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.codersergg.taskscheduler.dto.AbstractTaskResponse
 import java.io.Serializable
+import java.time.Instant
 
 data class TaskResponse(
-    @JsonProperty("id")
     val id: Long,
-    @JsonProperty("owner")
-    var owner: ProviderResponse,
-    @JsonProperty("last_run")
+    override val createdAt: Instant,
     var lastRun: String,
-) : AbstractTask(), Serializable
+) : AbstractTaskResponse(), Serializable, Responsible
 
 data class TaskResponseWithTask(
-    @JsonProperty("id")
     val id: Long,
-    @JsonProperty("last_run")
+    override val provider: ProviderResponse,
+    override val createdAt: Instant,
     var lastRun: String,
-) : AbstractTask(), Serializable
+) : AbstractTask(), Serializable, Responsible

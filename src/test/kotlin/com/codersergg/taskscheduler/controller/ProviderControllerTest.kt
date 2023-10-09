@@ -88,7 +88,7 @@ internal class ProviderControllerTest
                     content { contentType(MediaType.APPLICATION_JSON) }
                     jsonPath("$[0].id") { value("1") }
                     jsonPath("$[0].name") { value("task name 1") }
-                    jsonPath("$[0].tasks[0].last_run") { isNotEmpty() }
+                    jsonPath("$[0].tasks[0].lastRun") { isNotEmpty() }
                 }
         }
         @Test
@@ -102,7 +102,7 @@ internal class ProviderControllerTest
                     content { contentType(MediaType.APPLICATION_JSON) }
                     jsonPath("$[0].id") { value("1") }
                     jsonPath("$[0].name") { value("task name 1") }
-                    jsonPath("$[0].tasks[0].last_run") { isNotEmpty() }
+                    jsonPath("$[0].tasks[0].lastRun") { isNotEmpty() }
                 }
         }
 
@@ -121,7 +121,7 @@ internal class ProviderControllerTest
                     content { contentType(MediaType.APPLICATION_JSON) }
                     jsonPath("$[0].id") { value("1") }
                     jsonPath("$[0].name") { value("task name 1") }
-                    jsonPath("$[0].tasks[0].last_run") { isNotEmpty() }
+                    jsonPath("$[0].tasks[0].lastRun") { isNotEmpty() }
                 }
         }
     }

@@ -2,7 +2,7 @@ package com.codersergg.taskscheduler.controller
 
 import com.codersergg.taskscheduler.dto.request.TaskToCreateRequest
 import com.codersergg.taskscheduler.dto.request.TaskToUpdateRequest
-import com.codersergg.taskscheduler.dto.response.TaskResponse
+import com.codersergg.taskscheduler.dto.response.TaskResponseWithTask
 import com.codersergg.taskscheduler.service.TaskService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -20,14 +20,14 @@ class TaskController(private val taskService: TaskService) {
         ResponseEntity(e.message, HttpStatus.BAD_REQUEST)
 
     @GetMapping
-    fun getAllTask(): List<TaskResponse> = taskService.getAllTasks()
+    fun getAllTask(): List<TaskResponseWithTask> = taskService.getAllTasks()
 
     @GetMapping("/{id}")
-    fun getTask(@PathVariable id: Long): TaskResponse = taskService.getTask(id)
+    fun getTask(@PathVariable id: Long): TaskResponseWithTask = taskService.getTask(id)
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun createTask(@RequestBody task: TaskToCreateRequest): TaskResponse = taskService.createTask(task)
+    fun createTask(@RequestBody task: TaskToCreateRequest): TaskResponseWithTask = taskService.createTask(task)
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)

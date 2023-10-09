@@ -14,20 +14,22 @@ import java.time.format.DateTimeFormatter
 class Task(
     @NotNull
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "provider_id")
+    @JoinColumn(name = "providerId")
     var provider: Provider,
-    @Column(name = "last_run", nullable = false)
+    @Column(name = "createdAt", nullable = false)
+    var createdAt: Instant,
+    @Column(name = "lastRun", nullable = false)
     var lastRun: Instant,
     @Version
     var lastUpdated: LocalDateTime = LocalDateTime.now()
 ) : BaseEntity<Long>() {
 
     fun toTaskResponse(): TaskResponse {
-        return TaskResponse(id!!, provider.toProviderResponse(), convertInstantToString(lastRun))
+        return TaskResponse(id!!, createdAt, convertInstantToString(lastRun))
     }
 
-    fun toTaskResponseGraph(): TaskResponseWithTask {
-        return TaskResponseWithTask(id!!, convertInstantToString(lastRun))
+    fun toTaskResponseWithTask(): TaskResponseWithTask {
+        return TaskResponseWithTask(id!!, provider.toProviderResponse(), createdAt, convertInstantToString(lastRun))
     }
 
     private fun convertInstantToString(instant: Instant): String {

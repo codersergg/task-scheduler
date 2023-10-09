@@ -24,10 +24,10 @@ class Configuration {
         val owner2 = providerRepository.save(Provider("task name 2"))
         val owner3 = providerRepository.save(Provider("task name 3"))
 
-        taskRepository.save(Task(owner1, Instant.now()))
-        taskRepository.save(Task(owner1, Instant.now()))
-        taskRepository.save(Task(owner1, Instant.now()))
-        taskRepository.save(Task(owner2, Instant.now()))
-        taskRepository.save(Task(owner3, Instant.now()))
+        taskRepository.save(Task(owner1, Instant.now(), Instant.EPOCH))
+        taskRepository.save(Task(owner1, Instant.now(), Instant.EPOCH))
+        taskRepository.save(Task(owner1, Instant.now(), Instant.EPOCH))
+        taskRepository.save(Task(owner2, Instant.now(), Instant.EPOCH))
+        taskRepository.save(Task(owner3, Instant.now(), Instant.EPOCH))
     }*/
 }

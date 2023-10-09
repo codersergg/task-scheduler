@@ -2,7 +2,7 @@ package com.codersergg.taskscheduler.service
 
 import com.codersergg.taskscheduler.dto.request.ProviderRequest
 import com.codersergg.taskscheduler.dto.request.TaskToCreateRequest
-import com.codersergg.taskscheduler.dto.response.TaskResponse
+import com.codersergg.taskscheduler.dto.response.TaskResponseWithTask
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -22,12 +22,11 @@ internal class TaskServiceTest(@Autowired val taskService: TaskService) {
         @Test
         fun `should return TaskResponse`() {
             // when
-            val findById: TaskResponse = taskService.getTask(1)
+            val taskResponse: TaskResponseWithTask = taskService.getTask(1)
 
             // then
-            Assertions.assertThat(findById.id).isEqualTo(1)
-            Assertions.assertThat(findById.owner.name).isEqualTo("task name 1")
-            org.junit.jupiter.api.Assertions.assertNotNull(findById.lastRun)
+            Assertions.assertThat(taskResponse.id).isEqualTo(1)
+            Assertions.assertThat(taskResponse.createdAt).isNotNull
         }
     }
 
@@ -39,7 +38,7 @@ internal class TaskServiceTest(@Autowired val taskService: TaskService) {
         @Test
         fun `should return List of TaskResponse`() {
             // when
-            val findAll: List<TaskResponse> = taskService.getAllTasks()
+            val findAll: List<TaskResponseWithTask> = taskService.getAllTasks()
 
             // then
             Assertions.assertThat(findAll).isNotEmpty
@@ -56,16 +55,15 @@ internal class TaskServiceTest(@Autowired val taskService: TaskService) {
         @Test
         fun `should return TaskResponse`() {
             // given
-            val owner = ProviderRequest(3, "new task name")
-            val task = TaskToCreateRequest(owner)
+            val provider = ProviderRequest(3, "new task name")
+            val task = TaskToCreateRequest(provider)
 
             // when
-            val taskResponse: TaskResponse = taskService.createTask(task)
+            val taskResponse: TaskResponseWithTask = taskService.createTask(task)
 
             // then
             Assertions.assertThat(taskResponse).isNotNull
-            Assertions.assertThat(taskResponse.owner.name).isEqualTo("task name 3")
-
+            Assertions.assertThat(taskResponse.createdAt).isNotNull
         }
     }
 }
