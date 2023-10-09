@@ -55,7 +55,7 @@ class ProviderService(
         val resultList = query.setHint("jakarta.persistence.fetchgraph", graph)
 
         return resultList.resultList
-            .map { it.toOwnerResponseWithTask() }
+            .map { it.toProviderResponseWithTask() }
     }
 
     fun getOwner(id: Long): ProviderResponse {
@@ -70,7 +70,7 @@ class ProviderService(
         val graph = session.createEntityGraph(Provider::class.java)
         graph.addPluralSubgraph(Provider_.tasks).addSubgraph(Task_.provider)
         val load = session.byId(Provider::class.java).withFetchGraph(graph).load(id)
-        return load?.toOwnerResponseWithTask()
+        return load?.toProviderResponseWithTask()
             ?: throw NotFoundException()
     }
 
