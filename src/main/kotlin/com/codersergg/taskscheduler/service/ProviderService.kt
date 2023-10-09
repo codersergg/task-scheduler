@@ -3,10 +3,9 @@ package com.codersergg.taskscheduler.service
 import com.codersergg.taskscheduler.dto.request.ProviderRequestToAdd
 import com.codersergg.taskscheduler.dto.response.ProviderResponse
 import com.codersergg.taskscheduler.dto.response.ProviderWithTaskResponse
-import com.codersergg.taskscheduler.model.Provider_
 import com.codersergg.taskscheduler.model.Provider
+import com.codersergg.taskscheduler.model.Provider_
 import com.codersergg.taskscheduler.model.Task_
-import com.codersergg.taskscheduler.repository.ProviderRepository
 import com.codersergg.taskscheduler.repository.RequestParameters
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
@@ -18,10 +17,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
-class ProviderService(
-    @PersistenceContext private val em: EntityManager,
-    private val providerRepository: ProviderRepository
-) {
+class ProviderService(@PersistenceContext private val em: EntityManager) {
 
     fun getAllOwners(params: RequestParameters): List<ProviderResponse> {
         val session = em.unwrap(Session::class.java)

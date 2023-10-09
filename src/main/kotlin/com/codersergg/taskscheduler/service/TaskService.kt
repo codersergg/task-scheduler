@@ -2,7 +2,6 @@ package com.codersergg.taskscheduler.service
 
 import com.codersergg.taskscheduler.dto.request.TaskToCreateRequest
 import com.codersergg.taskscheduler.dto.request.TaskToUpdateRequest
-import com.codersergg.taskscheduler.dto.response.TaskResponse
 import com.codersergg.taskscheduler.dto.response.TaskResponseWithTask
 import com.codersergg.taskscheduler.repository.ProviderRepository
 import com.codersergg.taskscheduler.repository.TaskRepository

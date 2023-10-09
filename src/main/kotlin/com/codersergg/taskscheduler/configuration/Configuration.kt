@@ -1,14 +1,7 @@
 package com.codersergg.taskscheduler.configuration
 
-import com.codersergg.taskscheduler.model.Provider
-import com.codersergg.taskscheduler.model.Task
-import com.codersergg.taskscheduler.repository.ProviderRepository
-import com.codersergg.taskscheduler.repository.TaskRepository
-import org.springframework.boot.ApplicationRunner
 import org.springframework.boot.autoconfigure.domain.EntityScan
-import org.springframework.context.annotation.Bean
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
-import java.time.Instant
 
 
 @org.springframework.context.annotation.Configuration
