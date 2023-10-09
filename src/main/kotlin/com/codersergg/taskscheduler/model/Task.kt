@@ -14,8 +14,8 @@ import java.time.format.DateTimeFormatter
 class Task(
     @NotNull
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id")
-    var owner: Owner,
+    @JoinColumn(name = "provider_id")
+    var provider: Provider,
     @Column(name = "last_run", nullable = false)
     var lastRun: Instant,
     @Version
@@ -23,7 +23,7 @@ class Task(
 ) : BaseEntity<Long>() {
 
     fun toTaskResponse(): TaskResponse {
-        return TaskResponse(id!!, owner.toOwnerResponse(), convertInstantToString(lastRun))
+        return TaskResponse(id!!, provider.toProviderResponse(), convertInstantToString(lastRun))
     }
 
     fun toTaskResponseGraph(): TaskResponseWithTask {

@@ -16,16 +16,16 @@ import org.springframework.test.web.servlet.get
 
 @SpringBootTest
 @AutoConfigureMockMvc
-internal class OwnerControllerTest
+internal class ProviderControllerTest
 @Autowired constructor(
     val mockMvc: MockMvc,
     val objectMapper: ObjectMapper
 ) {
     @Nested
-    @DisplayName("GET /api/owner")
+    @DisplayName("GET /api/provider")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     inner class GetAllOwners {
-        private val baseUrl = "/api/owner"
+        private val baseUrl = "/api/provider"
         @Test
         fun `should return List of Owners`() {
             mockMvc.get(baseUrl) {
@@ -73,11 +73,11 @@ internal class OwnerControllerTest
     }
 
     @Nested
-    @DisplayName("GET /api/owner/task")
+    @DisplayName("GET /api/provider/task")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     inner class GetAllOwnersWithTasks {
 
-        private val baseUrl = "/api/owner/task"
+        private val baseUrl = "/api/provider/task"
         @Test
         fun `should return List of Owners`() {
             mockMvc.get(baseUrl) {

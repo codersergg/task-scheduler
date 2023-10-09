@@ -1,7 +1,7 @@
 package com.codersergg.taskscheduler.service
 
-import com.codersergg.taskscheduler.dto.response.OwnerResponse
-import com.codersergg.taskscheduler.dto.response.OwnerWithTaskResponse
+import com.codersergg.taskscheduler.dto.response.ProviderResponse
+import com.codersergg.taskscheduler.dto.response.ProviderWithTaskResponse
 import com.codersergg.taskscheduler.repository.Pagination
 import com.codersergg.taskscheduler.repository.RequestParameters
 import org.assertj.core.api.Assertions
@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class OwnerServiceTest(@Autowired val ownerService: OwnerService) {
+class ProviderServiceTest(@Autowired val providerService: ProviderService) {
     @Nested
     @DisplayName("getAllOwners()")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -22,7 +22,7 @@ class OwnerServiceTest(@Autowired val ownerService: OwnerService) {
         @Test
         fun `should return List of Owners`() {
             // when
-            val allOwners = ownerService.getAllOwners(RequestParameters())
+            val allOwners = providerService.getAllOwners(RequestParameters())
 
             // then
             Assertions.assertThat(allOwners.size).isEqualTo(3)
@@ -31,7 +31,7 @@ class OwnerServiceTest(@Autowired val ownerService: OwnerService) {
         @Test
         fun `should return List of OwnersWithTask`() {
             // when
-            val allOwners = ownerService.getAllOwnersWithTask(RequestParameters())
+            val allOwners = providerService.getAllOwnersWithTask(RequestParameters())
 
             // then
             Assertions.assertThat(allOwners.size).isEqualTo(3)
@@ -40,7 +40,7 @@ class OwnerServiceTest(@Autowired val ownerService: OwnerService) {
         @Test
         fun `should return List of Owners containing 2 elements from the first`() {
             // when
-            val allOwners = ownerService.getAllOwners(
+            val allOwners = providerService.getAllOwners(
                 RequestParameters(
                     pagination = Pagination(0, 2)
                 )
@@ -57,7 +57,7 @@ class OwnerServiceTest(@Autowired val ownerService: OwnerService) {
         @Test
         fun `should return List of Owners containing 2 elements from the second`() {
             // when
-            val allOwners = ownerService.getAllOwners(
+            val allOwners = providerService.getAllOwners(
                 RequestParameters(
                     pagination = Pagination(0, 2)
                 )
@@ -74,7 +74,7 @@ class OwnerServiceTest(@Autowired val ownerService: OwnerService) {
         @Test
         fun `should return List of OwnersWithTask containing 1 elements from the first`() {
             // when
-            val allOwners = ownerService.getAllOwnersWithTask(
+            val allOwners = providerService.getAllOwnersWithTask(
                 RequestParameters(
                     pagination = Pagination(1, 2)
                 )
@@ -89,7 +89,7 @@ class OwnerServiceTest(@Autowired val ownerService: OwnerService) {
         @Test
         fun `should return List of OwnersWithTask containing 1 elements from the second`() {
             // when
-            val allOwners = ownerService.getAllOwnersWithTask(
+            val allOwners = providerService.getAllOwnersWithTask(
                 RequestParameters(
                     pagination = Pagination(1, 2)
                 )
@@ -110,20 +110,20 @@ class OwnerServiceTest(@Autowired val ownerService: OwnerService) {
         @Test
         fun `should return Owner`() {
             // when
-            val owner = ownerService.getOwner(1)
+            val owner = providerService.getOwner(1)
 
             // then
-            Assertions.assertThat(owner).isInstanceOf(OwnerResponse::class.java)
+            Assertions.assertThat(owner).isInstanceOf(ProviderResponse::class.java)
             Assertions.assertThat(owner.id).isEqualTo(1)
         }
 
         @Test
         fun `should return OwnerWithTask`() {
             // when
-            val owner = ownerService.getOwnerWithTasks(2)
+            val owner = providerService.getOwnerWithTasks(2)
 
             // then
-            Assertions.assertThat(owner).isInstanceOf(OwnerWithTaskResponse::class.java)
+            Assertions.assertThat(owner).isInstanceOf(ProviderWithTaskResponse::class.java)
             Assertions.assertThat(owner.id).isEqualTo(2)
         }
     }

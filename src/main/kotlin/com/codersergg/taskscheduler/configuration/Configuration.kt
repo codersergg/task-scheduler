@@ -1,6 +1,6 @@
 package com.codersergg.taskscheduler.configuration
 
-import com.codersergg.taskscheduler.repository.OwnerRepository
+import com.codersergg.taskscheduler.repository.ProviderRepository
 import com.codersergg.taskscheduler.repository.TaskRepository
 import org.springframework.boot.ApplicationRunner
 import org.springframework.boot.autoconfigure.domain.EntityScan
@@ -14,7 +14,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 class Configuration {
     @Bean
     fun databaseInitializer(
-        ownerRepository: OwnerRepository,
+        providerRepository: ProviderRepository,
         taskRepository: TaskRepository
     ) = ApplicationRunner {
         /*val owner1 = ownerRepository.save(Owner("task name 1"))

@@ -1,6 +1,6 @@
 package com.codersergg.taskscheduler.controller
 
-import com.codersergg.taskscheduler.dto.request.OwnerRequest
+import com.codersergg.taskscheduler.dto.request.ProviderRequest
 import com.codersergg.taskscheduler.dto.request.TaskToCreateRequest
 import com.codersergg.taskscheduler.dto.request.TaskToUpdateRequest
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -81,7 +81,7 @@ internal class TaskControllerTest
         @Test
         fun `should add Task`() {
             // given
-            val owner3 = OwnerRequest(3, "task name 3")
+            val owner3 = ProviderRequest(3, "task name 3")
             val task = TaskToCreateRequest(owner3)
 
             // when
@@ -113,7 +113,7 @@ internal class TaskControllerTest
         fun `should update Task`() {
             // given
             val taskId: Long = 1
-            val owner = OwnerRequest(100, "task name will not be updated")
+            val owner = ProviderRequest(100, "task name will not be updated")
             val task = TaskToUpdateRequest(taskId, owner)
 
             // when
@@ -155,7 +155,7 @@ internal class TaskControllerTest
         @Test
         fun `should delete Task`() {
 
-            val owner2 = OwnerRequest(2, "task name 2")
+            val owner2 = ProviderRequest(2, "task name 2")
             val task = TaskToCreateRequest(owner2)
 
             // when

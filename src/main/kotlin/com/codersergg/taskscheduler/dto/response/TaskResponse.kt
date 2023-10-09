@@ -8,7 +8,7 @@ data class TaskResponse(
     @JsonProperty("id")
     val id: Long,
     @JsonProperty("owner")
-    var owner: OwnerResponse,
+    var owner: ProviderResponse,
     @JsonProperty("last_run")
     var lastRun: String,
 ) : AbstractTask(), Serializable

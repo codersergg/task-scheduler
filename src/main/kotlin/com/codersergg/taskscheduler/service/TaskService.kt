@@ -3,7 +3,7 @@ package com.codersergg.taskscheduler.service
 import com.codersergg.taskscheduler.dto.request.TaskToCreateRequest
 import com.codersergg.taskscheduler.dto.request.TaskToUpdateRequest
 import com.codersergg.taskscheduler.dto.response.TaskResponse
-import com.codersergg.taskscheduler.repository.OwnerRepository
+import com.codersergg.taskscheduler.repository.ProviderRepository
 import com.codersergg.taskscheduler.repository.TaskRepository
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 import org.springframework.data.repository.findByIdOrNull
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class TaskService(
-    private val ownerRepository: OwnerRepository,
+    private val providerRepository: ProviderRepository,
     private val taskRepository: TaskRepository
 ) {
 
@@ -24,7 +24,7 @@ class TaskService(
     }
 
     fun createTask(task: TaskToCreateRequest): TaskResponse {
-        val owner = ownerRepository.findByIdOrNull(task.owner.id) ?: throw NotFoundException()
+        val owner = providerRepository.findByIdOrNull(task.provider.id) ?: throw NotFoundException()
         return taskRepository.save(task.toTask(owner)).toTaskResponse()
     }
 

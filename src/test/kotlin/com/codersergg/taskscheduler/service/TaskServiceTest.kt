@@ -1,6 +1,6 @@
 package com.codersergg.taskscheduler.service
 
-import com.codersergg.taskscheduler.dto.request.OwnerRequest
+import com.codersergg.taskscheduler.dto.request.ProviderRequest
 import com.codersergg.taskscheduler.dto.request.TaskToCreateRequest
 import com.codersergg.taskscheduler.dto.response.TaskResponse
 import org.assertj.core.api.Assertions
@@ -56,7 +56,7 @@ internal class TaskServiceTest(@Autowired val taskService: TaskService) {
         @Test
         fun `should return TaskResponse`() {
             // given
-            val owner = OwnerRequest(3, "new task name")
+            val owner = ProviderRequest(3, "new task name")
             val task = TaskToCreateRequest(owner)
 
             // when
