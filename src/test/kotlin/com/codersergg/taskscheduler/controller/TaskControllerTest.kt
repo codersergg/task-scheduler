@@ -1,8 +1,8 @@
 package com.codersergg.taskscheduler.controller
 
-import com.codersergg.taskscheduler.model.OwnerRequest
-import com.codersergg.taskscheduler.model.TaskRequestToCreate
-import com.codersergg.taskscheduler.model.TaskRequestToUpdate
+import com.codersergg.taskscheduler.dto.request.OwnerRequest
+import com.codersergg.taskscheduler.dto.request.TaskToCreateRequest
+import com.codersergg.taskscheduler.dto.request.TaskToUpdateRequest
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
@@ -82,7 +82,7 @@ internal class TaskControllerTest
         fun `should add Task`() {
             // given
             val owner3 = OwnerRequest(3, "task name 3")
-            val task = TaskRequestToCreate(owner3)
+            val task = TaskToCreateRequest(owner3)
 
             // when
             val postRequest = mockMvc.post("/api/task") {
@@ -114,7 +114,7 @@ internal class TaskControllerTest
             // given
             val taskId: Long = 1
             val owner = OwnerRequest(100, "task name will not be updated")
-            val task = TaskRequestToUpdate(taskId, owner)
+            val task = TaskToUpdateRequest(taskId, owner)
 
             // when
             val putRequest =
@@ -156,7 +156,7 @@ internal class TaskControllerTest
         fun `should delete Task`() {
 
             val owner2 = OwnerRequest(2, "task name 2")
-            val task = TaskRequestToCreate(owner2)
+            val task = TaskToCreateRequest(owner2)
 
             // when
             mockMvc.post("/api/task") {

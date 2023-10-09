@@ -1,14 +1,13 @@
 package com.codersergg.taskscheduler.model
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.codersergg.taskscheduler.dto.response.TaskResponse
+import com.codersergg.taskscheduler.dto.response.TaskResponseWithTask
 import jakarta.persistence.*
 import jakarta.validation.constraints.NotNull
-import java.io.Serializable
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-
 
 @Entity
 @Table(name = "Task")
@@ -38,47 +37,3 @@ class Task(
         return formatter.format(instant)
     }
 }
-
-abstract class AbstractTask : Serializable {
-    abstract var owner: OwnerRequest
-}
-
-data class TaskRequestToCreate(
-    @JsonProperty("owner")
-    override var owner: OwnerRequest,
-    @JsonProperty("last_run")
-    var lastRun: Instant = Instant.EPOCH,
-) : AbstractTask(), Serializable {
-    fun toTask(): Task {
-        return Task(owner.toOwner(), lastRun)
-    }
-
-    fun toTask(owner: Owner): Task {
-        return Task(owner, lastRun)
-    }
-}
-
-data class TaskRequestToUpdate(
-    @JsonProperty("id")
-    val id: Long,
-    @JsonProperty("owner")
-    override var owner: OwnerRequest,
-    @JsonProperty("last_run")
-    var lastRun: Instant = Instant.now(),
-) : AbstractTask(), Serializable
-
-data class TaskResponse(
-    @JsonProperty("id")
-    val id: Long,
-    @JsonProperty("owner")
-    var owner: OwnerResponse,
-    @JsonProperty("last_run")
-    var lastRun: String,
-) : Serializable
-
-data class TaskResponseWithTask(
-    @JsonProperty("id")
-    val id: Long,
-    @JsonProperty("last_run")
-    var lastRun: String,
-) : Serializable

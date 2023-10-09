@@ -30,6 +30,3 @@ abstract class BaseEntity<T : Serializable> {
         return "${this.javaClass.simpleName}(id=$id)"
     }
 }
-
-interface Responsible
-interface Requestable

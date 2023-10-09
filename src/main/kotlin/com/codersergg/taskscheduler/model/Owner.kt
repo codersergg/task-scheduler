@@ -1,6 +1,8 @@
 package com.codersergg.taskscheduler.model
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.codersergg.taskscheduler.dto.request.OwnerRequest
+import com.codersergg.taskscheduler.dto.response.OwnerResponse
+import com.codersergg.taskscheduler.dto.response.OwnerWithTaskResponse
 import jakarta.persistence.*
 import org.hibernate.annotations.NaturalId
 import java.io.Serializable
@@ -22,46 +24,11 @@ class Owner(
         return OwnerResponse(id!!, name)
     }
 
-    fun toOwnerResponseWithTask(): OwnerResponseWithTask {
-        return OwnerResponseWithTask(id!!, name, tasks.map { it.toTaskResponseGraph() })
+    fun toOwnerResponseWithTask(): OwnerWithTaskResponse {
+        return OwnerWithTaskResponse(id!!, name, tasks.map { it.toTaskResponseGraph() })
     }
 
     fun toOwnerRequest(): OwnerRequest {
         return OwnerRequest(id!!, name)
     }
 }
-
-data class OwnerRequest(
-    @JsonProperty("id")
-    val id: Long,
-    @JsonProperty("name")
-    var name: String,
-) : Serializable, Requestable {
-    fun toOwner(): Owner {
-        return Owner(name)
-    }
-}
-
-data class OwnerRequestToAdd(
-    @JsonProperty("name")
-    var name: String,
-) : Serializable, Requestable {
-    fun toOwner(): Owner {
-        return Owner(name)
-    }
-}
-
-data class OwnerResponse(
-    @JsonProperty("id")
-    val id: Long,
-    @JsonProperty("name")
-    var name: String,
-) : Serializable, Responsible
-
-data class OwnerResponseWithTask(
-    @JsonProperty("id")
-    val id: Long,
-    @JsonProperty("name")
-    var name: String,
-    val tasks: List<TaskResponseWithTask>
-) : Serializable, Responsible

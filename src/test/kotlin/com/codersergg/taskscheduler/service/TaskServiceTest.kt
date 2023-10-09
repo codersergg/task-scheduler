@@ -1,8 +1,8 @@
 package com.codersergg.taskscheduler.service
 
-import com.codersergg.taskscheduler.model.OwnerRequest
-import com.codersergg.taskscheduler.model.TaskRequestToCreate
-import com.codersergg.taskscheduler.model.TaskResponse
+import com.codersergg.taskscheduler.dto.request.OwnerRequest
+import com.codersergg.taskscheduler.dto.request.TaskToCreateRequest
+import com.codersergg.taskscheduler.dto.response.TaskResponse
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -57,7 +57,7 @@ internal class TaskServiceTest(@Autowired val taskService: TaskService) {
         fun `should return TaskResponse`() {
             // given
             val owner = OwnerRequest(3, "new task name")
-            val task = TaskRequestToCreate(owner)
+            val task = TaskToCreateRequest(owner)
 
             // when
             val taskResponse: TaskResponse = taskService.createTask(task)

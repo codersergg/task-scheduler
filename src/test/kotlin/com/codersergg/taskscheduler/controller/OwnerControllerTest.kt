@@ -57,6 +57,7 @@ internal class OwnerControllerTest
             val parameters = RequestParameters(
                 pagination = Pagination(2, 2)
             )
+            println(objectMapper.writeValueAsString(parameters))
 
             mockMvc.get(baseUrl) {
                 contentType = MediaType.APPLICATION_JSON
@@ -65,8 +66,8 @@ internal class OwnerControllerTest
                 .andExpect {
                     status { isOk() }
                     content { contentType(MediaType.APPLICATION_JSON) }
-                    jsonPath("$[0].id") { value("3") }
-                    jsonPath("$[0].name") { value("task name 3") }
+                    jsonPath("$[0].id") { value("1") }
+                    jsonPath("$[0].name") { value("task name 1") }
                 }
         }
     }

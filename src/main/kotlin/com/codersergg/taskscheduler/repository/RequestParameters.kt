@@ -1,6 +1,6 @@
 package com.codersergg.taskscheduler.repository
 
-import com.codersergg.taskscheduler.model.Requestable
+import com.codersergg.taskscheduler.dto.request.Requestable
 import java.io.Serializable
 
 abstract class AbstractRequestParameters(

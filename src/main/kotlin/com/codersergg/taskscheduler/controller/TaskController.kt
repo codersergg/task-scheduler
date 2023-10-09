@@ -1,13 +1,12 @@
 package com.codersergg.taskscheduler.controller
 
-import com.codersergg.taskscheduler.model.TaskRequestToCreate
-import com.codersergg.taskscheduler.model.TaskRequestToUpdate
-import com.codersergg.taskscheduler.model.TaskResponse
+import com.codersergg.taskscheduler.dto.request.TaskToCreateRequest
+import com.codersergg.taskscheduler.dto.request.TaskToUpdateRequest
+import com.codersergg.taskscheduler.dto.response.TaskResponse
 import com.codersergg.taskscheduler.service.TaskService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.util.*
 
 @RestController
 @RequestMapping("api/task")
@@ -19,6 +18,7 @@ class TaskController(private val taskService: TaskService) {
     @ExceptionHandler(IllegalArgumentException::class)
     fun handleBadRequest(e: IllegalArgumentException): ResponseEntity<String> =
         ResponseEntity(e.message, HttpStatus.BAD_REQUEST)
+
     @GetMapping
     fun getAllTask(): List<TaskResponse> = taskService.getAllTasks()
 
@@ -27,11 +27,11 @@ class TaskController(private val taskService: TaskService) {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun createTask(@RequestBody task: TaskRequestToCreate): TaskResponse = taskService.createTask(task)
+    fun createTask(@RequestBody task: TaskToCreateRequest): TaskResponse = taskService.createTask(task)
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    fun updateTask(@RequestBody task: TaskRequestToUpdate): Int = taskService.updateTask(task)
+    fun updateTask(@RequestBody task: TaskToUpdateRequest): Int = taskService.updateTask(task)
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

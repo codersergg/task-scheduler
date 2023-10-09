@@ -1,8 +1,8 @@
 package com.codersergg.taskscheduler.service
 
-import com.codersergg.taskscheduler.model.TaskRequestToCreate
-import com.codersergg.taskscheduler.model.TaskRequestToUpdate
-import com.codersergg.taskscheduler.model.TaskResponse
+import com.codersergg.taskscheduler.dto.request.TaskToCreateRequest
+import com.codersergg.taskscheduler.dto.request.TaskToUpdateRequest
+import com.codersergg.taskscheduler.dto.response.TaskResponse
 import com.codersergg.taskscheduler.repository.OwnerRepository
 import com.codersergg.taskscheduler.repository.TaskRepository
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
@@ -23,12 +23,12 @@ class TaskService(
         return taskRepository.findById(id).get().toTaskResponse()
     }
 
-    fun createTask(task: TaskRequestToCreate): TaskResponse {
+    fun createTask(task: TaskToCreateRequest): TaskResponse {
         val owner = ownerRepository.findByIdOrNull(task.owner.id) ?: throw NotFoundException()
         return taskRepository.save(task.toTask(owner)).toTaskResponse()
     }
 
-    fun updateTask(task: TaskRequestToUpdate): Int {
+    fun updateTask(task: TaskToUpdateRequest): Int {
         return taskRepository.update(task.id, task.lastRun)
     }
 

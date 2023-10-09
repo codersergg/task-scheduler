@@ -1,46 +1,73 @@
 package com.codersergg.taskscheduler.service
 
-import com.codersergg.taskscheduler.model.*
-import com.codersergg.taskscheduler.repository.EntityManagerFactoryService
+import com.codersergg.taskscheduler.dto.request.OwnerRequestToAdd
+import com.codersergg.taskscheduler.dto.response.OwnerResponse
+import com.codersergg.taskscheduler.dto.response.OwnerWithTaskResponse
+import com.codersergg.taskscheduler.model.Owner
+import com.codersergg.taskscheduler.model.Owner_
+import com.codersergg.taskscheduler.model.Task_
+import com.codersergg.taskscheduler.repository.OwnerRepository
 import com.codersergg.taskscheduler.repository.RequestParameters
+import jakarta.persistence.EntityManager
+import jakarta.persistence.PersistenceContext
+import org.hibernate.Session
 import org.hibernate.query.Order
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
-class OwnerService(private val emf: EntityManagerFactoryService) {
+@Transactional
+class OwnerService(@PersistenceContext private val em: EntityManager, private val ownerRepository: OwnerRepository) {
+
     fun getAllOwners(params: RequestParameters): List<OwnerResponse> {
-        return emf.session().createSelectionQuery("SELECT o FROM Owner o", Owner::class.java)
+        val session = em.unwrap(Session::class.java)
+
+        val resultList = session.createSelectionQuery("SELECT o FROM Owner o", Owner::class.java)
             .setReadOnly(true)
             .setOrder(mutableListOf(Order.asc(Owner_.name)) as List<Order<in Owner>>?)
-            .setMaxResults(params.pagination.maxResult)
             .setFirstResult(params.pagination.firstResult)
+            .setMaxResults(params.pagination.maxResult)
             .resultList
+
+        return resultList
             .map { it.toOwnerResponse() }
     }
 
-    fun getAllOwnersWithTask(params: RequestParameters): List<OwnerResponseWithTask> {
-        val graph = emf.session().createEntityGraph(Owner::class.java)
-        graph.addPluralSubgraph(Owner_.tasks).addSubgraph(Task_.owner)
-        val query = emf.session().createSelectionQuery("SELECT o FROM Owner o", Owner::class.java)
+    fun getAllOwnersWithTask(params: RequestParameters): List<OwnerWithTaskResponse> {
+        val session = em.unwrap(Session::class.java)
+        val ids = session
+            .createQuery("SELECT o.id FROM Owner o", Long::class.java)
+            .setFirstResult(params.pagination.firstResult)
+            .setMaxResults(params.pagination.maxResult)
+            .resultList
+
+        val query = session.createSelectionQuery("SELECT o FROM Owner o where o.id in (:ids)", Owner::class.java)
+            .setParameterList("ids", ids)
             .setReadOnly(true)
             .setOrder(mutableListOf(Order.asc(Owner_.name)) as List<Order<in Owner>>?)
-            .setMaxResults(params.pagination.maxResult)
-            .setFirstResult(params.pagination.firstResult)
-        return query.setHint("jakarta.persistence.fetchgraph", graph)
-            .resultList
+
+        val graph = session.createEntityGraph(Owner::class.java)
+        graph.addPluralSubgraph(Owner_.tasks).addSubgraph(Task_.owner)
+        val resultList = query.setHint("jakarta.persistence.fetchgraph", graph)
+
+        return resultList.resultList
             .map { it.toOwnerResponseWithTask() }
     }
 
     fun getOwner(id: Long): OwnerResponse {
-        return emf.session().find(Owner::class.java, id)?.toOwnerResponse()
+        val session = em.unwrap(Session::class.java)
+        val find = session.find(Owner::class.java, id)
+        return find?.toOwnerResponse()
             ?: throw NotFoundException()
     }
 
-    fun getOwnerWithTasks(id: Long): OwnerResponseWithTask {
-        val graph = emf.session().createEntityGraph(Owner::class.java)
+    fun getOwnerWithTasks(id: Long): OwnerWithTaskResponse {
+        val session = em.unwrap(Session::class.java)
+        val graph = session.createEntityGraph(Owner::class.java)
         graph.addPluralSubgraph(Owner_.tasks).addSubgraph(Task_.owner)
-        return emf.session().byId(Owner::class.java).withFetchGraph(graph).load(id)?.toOwnerResponseWithTask()
+        val load = session.byId(Owner::class.java).withFetchGraph(graph).load(id)
+        return load?.toOwnerResponseWithTask()
             ?: throw NotFoundException()
     }
 
