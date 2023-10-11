@@ -6,8 +6,11 @@ import java.time.Instant
 abstract class AbstractTask : Serializable {
     abstract val provider: AbstractProvider
     abstract val createdAt: Instant
+    abstract val delay: AbstractDelay
 }
 
 abstract class AbstractTaskResponse : Serializable {
     abstract val createdAt: Instant
 }
+
+interface Task

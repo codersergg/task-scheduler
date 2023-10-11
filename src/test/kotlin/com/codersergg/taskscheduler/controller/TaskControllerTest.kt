@@ -1,5 +1,6 @@
 package com.codersergg.taskscheduler.controller
 
+import com.codersergg.taskscheduler.dto.Duration
 import com.codersergg.taskscheduler.dto.request.ProviderRequest
 import com.codersergg.taskscheduler.dto.request.TaskToCreateRequest
 import com.codersergg.taskscheduler.dto.request.TaskToUpdateRequest
@@ -82,7 +83,7 @@ internal class TaskControllerTest
         fun `should add Task`() {
             // given
             val owner3 = ProviderRequest(3, "task name 3")
-            val task = TaskToCreateRequest(owner3)
+            val task = TaskToCreateRequest(owner3, delay = Duration(5000))
 
             // when
             val postRequest = mockMvc.post("/api/task") {
@@ -114,7 +115,7 @@ internal class TaskControllerTest
             // given
             val taskId: Long = 1
             val owner = ProviderRequest(100, "task name will not be updated")
-            val task = TaskToUpdateRequest(taskId, owner)
+            val task = TaskToUpdateRequest(taskId, owner, delay = Duration(5000))
 
             // when
             val putRequest =
@@ -156,7 +157,7 @@ internal class TaskControllerTest
         fun `should delete Task`() {
 
             val owner2 = ProviderRequest(2, "task name 2")
-            val task = TaskToCreateRequest(owner2)
+            val task = TaskToCreateRequest(owner2, delay = Duration(5000))
 
             // when
             mockMvc.post("/api/task") {

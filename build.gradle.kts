@@ -62,6 +62,7 @@ dependencies {
 
     // serialization
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2")
 
     // db, jpa
     //implementation("org.hibernate.orm:hibernate-core:6.3.1.Final")
@@ -76,6 +77,8 @@ dependencies {
     runtimeOnly("com.h2database:h2")
     runtimeOnly("org.postgresql:postgresql")
     //implementation("org.flywaydb:flyway-core")
+    implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
+    implementation("joda-time:joda-time:2.12.5")
 
     // test
     testImplementation("org.springframework.boot:spring-boot-starter-test")

@@ -1,9 +1,18 @@
 package com.codersergg.taskscheduler.dto
 
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import java.io.Serializable
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+@JsonSubTypes(
+    JsonSubTypes.Type(value = DefaultProvider::class, name = "DefaultProvider"),
+)
 abstract class AbstractProvider : Serializable {
-    abstract var name: String
+    abstract val name: String
 }
 
-data class DefaultProvider(override var name: String) : AbstractProvider(), Serializable
+data class DefaultProvider(
+    override val name: String,
+    val type: String = "DefaultProvider"
+) : AbstractProvider(), Serializable

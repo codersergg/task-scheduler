@@ -1,5 +1,6 @@
 package com.codersergg.taskscheduler.model
 
+import com.codersergg.taskscheduler.dto.Duration
 import com.codersergg.taskscheduler.dto.response.TaskResponse
 import com.codersergg.taskscheduler.dto.response.TaskResponseWithTask
 import jakarta.persistence.*
@@ -20,6 +21,8 @@ class Task(
     var createdAt: Instant,
     @Column(name = "lastRun", nullable = false)
     var lastRun: Instant,
+    @Column(name = "delay", nullable = false)
+    var delay: String,
     @Version
     var lastUpdated: LocalDateTime = LocalDateTime.now()
 ) : BaseEntity<Long>() {
@@ -29,7 +32,13 @@ class Task(
     }
 
     fun toTaskResponseWithTask(): TaskResponseWithTask {
-        return TaskResponseWithTask(id!!, provider.toProviderResponse(), createdAt, convertInstantToString(lastRun))
+        return TaskResponseWithTask(
+            id!!,
+            provider.toProviderResponse(),
+            createdAt,
+            Duration(delay.toLong()),
+            convertInstantToString(lastRun)
+        )
     }
 
     private fun convertInstantToString(instant: Instant): String {

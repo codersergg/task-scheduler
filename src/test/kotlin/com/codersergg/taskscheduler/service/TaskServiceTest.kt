@@ -1,5 +1,6 @@
 package com.codersergg.taskscheduler.service
 
+import com.codersergg.taskscheduler.dto.Duration
 import com.codersergg.taskscheduler.dto.request.ProviderRequest
 import com.codersergg.taskscheduler.dto.request.TaskToCreateRequest
 import com.codersergg.taskscheduler.dto.response.TaskResponseWithTask
@@ -56,7 +57,7 @@ internal class TaskServiceTest(@Autowired val taskService: TaskService) {
         fun `should return TaskResponse`() {
             // given
             val provider = ProviderRequest(3, "new task name")
-            val task = TaskToCreateRequest(provider)
+            val task = TaskToCreateRequest(provider, delay = Duration(5000))
 
             // when
             val taskResponse: TaskResponseWithTask = taskService.createTask(task)

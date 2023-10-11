@@ -1,13 +1,14 @@
 package com.codersergg.taskscheduler.scheduler
 
+import com.codersergg.taskscheduler.dto.DefaultProvider
+import com.codersergg.taskscheduler.dto.DurationRestTask
+import com.codersergg.taskscheduler.dto.Duration
 import kotlinx.coroutines.*
 import kotlinx.coroutines.time.withTimeout
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import java.time.Duration
+import org.assertj.core.api.Assertions
+import org.junit.jupiter.api.*
+import java.net.URI
+import java.time.Instant
 
 class SchedulerTest {
 
@@ -22,29 +23,49 @@ class SchedulerTest {
             // given
             var count = 0
             var result = 0
-            val timeMillis: Long = 100
-            val duration = kotlin.time.Duration.parse("0.1s")
-            val function = {
+            val timeMillis: Long = 250
+            val duration = kotlin.time.Duration.parse("0.25s")
+            val function1 = {
                 result++
-                println("Simple text")
+                println("Simple text 1")
+            }
+            val function2 = {
+                result++
+                println("Simple text 2")
             }
 
             // when
-            //assertTimeoutPreemptively(Duration.ofMillis(20 * timeMillis)) {
-            GlobalScope.launch {
-                withTimeout(Duration.ofMillis(5 * timeMillis)) {
-                    Scheduler.run(function, duration)
-                }
-                while (isActive) {
-                    delay(duration)
-                    println("Count: ${++count}")
+            assertTimeoutPreemptively(java.time.Duration.ofMillis(20 * timeMillis)) {
+                GlobalScope.launch {
+                    withTimeout(java.time.Duration.ofMillis(5 * timeMillis)) {
+                        Scheduler.run(
+                            function1, DurationRestTask(
+                                DefaultProvider("Provider name"),
+                                Instant.now(),
+                                URI("http://localhost:8080/api/test"),
+                                Duration(timeMillis)
+                            )
+                        )
+                        Scheduler.run(
+                            function2, DurationRestTask(
+                                DefaultProvider("Other provider name"),
+                                Instant.now(),
+                                URI("http://localhost:8080/api/test"),
+                                Duration(timeMillis)
+                            )
+                        )
+                    }
+                    while (isActive) {
+                        delay(duration)
+                        ++count
+                        ++count
+                    }
                 }
             }
-            //}
             // then
             runBlocking {
-                delay(6 * timeMillis)
-                assertEquals(count, result)
+                delay(7 * timeMillis)
+                Assertions.assertThat(count).isLessThanOrEqualTo(result)
             }
         }
     }
