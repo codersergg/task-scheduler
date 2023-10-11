@@ -1,39 +1,45 @@
 package com.codersergg.taskscheduler.configuration
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.json.JsonMapper
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule
+import com.codersergg.taskscheduler.dto.Duration
+import com.codersergg.taskscheduler.dto.Timer
+import com.codersergg.taskscheduler.model.Provider
+import com.codersergg.taskscheduler.model.Task
+import com.codersergg.taskscheduler.repository.ProviderRepository
+import com.codersergg.taskscheduler.repository.TaskRepository
+import org.springframework.boot.ApplicationRunner
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.Bean
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
 
 
 @org.springframework.context.annotation.Configuration
 @EnableJpaRepositories("com.codersergg.taskscheduler.repository")
 @EntityScan("com.codersergg.taskscheduler.model")
 class Configuration {
-    /*@Bean
+    @Bean
     fun databaseInitializer(
         providerRepository: ProviderRepository,
         taskRepository: TaskRepository
     ) = ApplicationRunner {
-        val owner1 = providerRepository.save(Provider("task name 1"))
-        val owner2 = providerRepository.save(Provider("task name 2"))
-        val owner3 = providerRepository.save(Provider("task name 3"))
+        /*val provider1 = providerRepository.save(Provider("provider name 1"))
+        val provider2 = providerRepository.save(Provider("provider name 2"))
+        val provider3 = providerRepository.save(Provider("provider name 3"))
 
-        taskRepository.save(Task(owner1, Instant.now(), Instant.EPOCH))
-        taskRepository.save(Task(owner1, Instant.now(), Instant.EPOCH))
-        taskRepository.save(Task(owner1, Instant.now(), Instant.EPOCH))
-        taskRepository.save(Task(owner2, Instant.now(), Instant.EPOCH))
-        taskRepository.save(Task(owner3, Instant.now(), Instant.EPOCH))
-    }*/
+        val createdAt = Instant.now()
+        val save = taskRepository.saveAndFlush(Task(provider1, createdAt, Instant.EPOCH, Duration(5)))
+        //save.delay = Timer(1, 2, 11, 30)
+        //taskRepository.saveAndFlush(save)
+        val taskToSave = Task(provider1, Instant.now(), Instant.EPOCH, Duration(5))
+        taskRepository.saveAndFlush(taskToSave).toTaskResponseWithDelay()
+        taskRepository.saveAndFlush(Task(provider1, Instant.now(), Instant.EPOCH, Duration(5)))
+        taskRepository.saveAndFlush(Task(provider2, Instant.now(), Instant.EPOCH, Duration(5)))
+        taskRepository.saveAndFlush(Task(provider3, Instant.now(), Instant.EPOCH, Timer(1, 2, 11, 30)))
 
-/*    @Bean(name = ["objMapper"])
-    fun objMapper(): ObjectMapper = JsonMapper.builder()
-        .addModule(ParameterNamesModule())
-        .addModule(Jdk8Module())
-        .addModule(JavaTimeModule())
-        .build()*/
+
+
+        val tasks = taskRepository.findAllByOrderById()
+        tasks.forEach { println(it.toTaskResponseWithDelay()) }*/
+    }
 }

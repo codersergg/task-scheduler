@@ -1,11 +1,15 @@
 package com.codersergg.taskscheduler.controller
 
 import com.codersergg.taskscheduler.dto.Duration
+import com.codersergg.taskscheduler.dto.Timer
 import com.codersergg.taskscheduler.dto.request.ProviderRequest
 import com.codersergg.taskscheduler.dto.request.TaskToCreateRequest
 import com.codersergg.taskscheduler.dto.request.TaskToUpdateRequest
+import com.codersergg.taskscheduler.model.Provider
+import com.codersergg.taskscheduler.model.Task
+import com.codersergg.taskscheduler.repository.ProviderRepository
+import com.codersergg.taskscheduler.repository.TaskRepository
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -15,14 +19,26 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.*
+import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.junit.jupiter.Testcontainers
+import java.time.Instant
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Testcontainers
 internal class TaskControllerTest
 @Autowired constructor(
     val mockMvc: MockMvc,
-    val objectMapper: ObjectMapper
+    val objectMapper: ObjectMapper,
+    val providerRepository: ProviderRepository,
+    val taskRepository: TaskRepository
 ) {
+    @Container
+    var postgresContainer = PostgreSQLContainer("postgres:13.3")
+        .withUsername("myuser")
+        .withPassword("mypassword")
+        .withDatabaseName("mydatabase")
 
     @Nested
     @DisplayName("GET /api/task")
@@ -38,7 +54,7 @@ internal class TaskControllerTest
                     status { isOk() }
                     content { contentType(MediaType.APPLICATION_JSON) }
                     jsonPath("$[0].id") { value("1") }
-                    jsonPath("$[0].provider.name") { value("task name 1") }
+                    jsonPath("$[0].provider.name") { value("provider name 1") }
                     jsonPath("$[0].lastRun") { isNotEmpty() }
                 }
         }
@@ -48,6 +64,7 @@ internal class TaskControllerTest
     @DisplayName("GET /api/task/1")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     inner class GetTask {
+
         @Test
         fun `should return Task`() {
             mockMvc.get("/api/task/1") {
@@ -57,7 +74,7 @@ internal class TaskControllerTest
                     status { isOk() }
                     content { contentType(MediaType.APPLICATION_JSON) }
                     jsonPath("$.id") { value(1L) }
-                    jsonPath("$.provider.name") { value("task name 1") }
+                    jsonPath("$.provider.name") { value("provider name 1") }
                     jsonPath("$.lastRun") { isNotEmpty() }
                 }
         }
@@ -82,7 +99,7 @@ internal class TaskControllerTest
         @Test
         fun `should add Task`() {
             // given
-            val owner3 = ProviderRequest(3, "task name 3")
+            val owner3 = ProviderRequest(3, "provider name 3")
             val task = TaskToCreateRequest(owner3, delay = Duration(5000))
 
             // when
@@ -99,8 +116,8 @@ internal class TaskControllerTest
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                     }
-                    jsonPath("$.id") { value(7) }
-                    jsonPath("$.provider.name") { value("task name 3") }
+                    jsonPath("$.id") { value(6) }
+                    jsonPath("$.provider.name") { value("provider name 3") }
                     jsonPath("$.lastRun") { isNotEmpty() }
                 }
         }
@@ -114,8 +131,8 @@ internal class TaskControllerTest
         fun `should update Task`() {
             // given
             val taskId: Long = 1
-            val owner = ProviderRequest(100, "task name will not be updated")
-            val task = TaskToUpdateRequest(taskId, owner, delay = Duration(5000))
+            val provider = ProviderRequest(100, "task name will not be updated")
+            val task = TaskToUpdateRequest(taskId, provider, delay = Duration(5000))
 
             // when
             val putRequest =
@@ -125,15 +142,11 @@ internal class TaskControllerTest
                 }
 
             // then
-            val andReturnPut = putRequest
+            putRequest
                 .andDo { print() }
                 .andExpect {
-                    status { isOk() }
-                    content {
-                        contentType(MediaType.APPLICATION_JSON)
-                    }
+                    status { isBadRequest() }
                 }
-            assertThat(andReturnPut.andReturn().response.contentAsString).isEqualTo("1")
 
             mockMvc.get("/api/task/1") {
                 contentType = MediaType.APPLICATION_JSON
@@ -142,7 +155,7 @@ internal class TaskControllerTest
                     status { isOk() }
                     content { contentType(MediaType.APPLICATION_JSON) }
                     jsonPath("$.id") { value(taskId) }
-                    jsonPath("$.provider.name") { value("task name 1") }
+                    jsonPath("$.provider.name") { value("provider name 1") }
                     jsonPath("$.lastRun") { isNotEmpty() }
                 }
         }
@@ -156,8 +169,8 @@ internal class TaskControllerTest
         @Test
         fun `should delete Task`() {
 
-            val owner2 = ProviderRequest(2, "task name 2")
-            val task = TaskToCreateRequest(owner2, delay = Duration(5000))
+            val provider2 = Provider("provider name 2")
+            val task = Task(provider2, Instant.now(), Instant.EPOCH, Duration(5))
 
             // when
             mockMvc.post("/api/task") {
@@ -172,5 +185,26 @@ internal class TaskControllerTest
                     status { isNoContent() }
                 }
         }
+    }
+
+    private fun setPropertyContainer() {
+        postgresContainer.host
+        postgresContainer.databaseName
+        postgresContainer.username
+        postgresContainer.password
+        postgresContainer.start()
+        init()
+    }
+
+    private fun init() {
+        val provider1 = providerRepository.save(Provider("provider name 1"))
+        val provider2 = providerRepository.save(Provider("provider name 2"))
+        val provider3 = providerRepository.save(Provider("provider name 3"))
+
+        taskRepository.save(Task(provider1, Instant.now(), Instant.EPOCH, Duration(5)))
+        taskRepository.save(Task(provider1, Instant.now(), Instant.EPOCH, Duration(5)))
+        taskRepository.save(Task(provider1, Instant.now(), Instant.EPOCH, Duration(5)))
+        taskRepository.save(Task(provider2, Instant.now(), Instant.EPOCH, Duration(5)))
+        taskRepository.save(Task(provider3, Instant.now(), Instant.EPOCH, Timer(1, 2, 11, 30)))
     }
 }

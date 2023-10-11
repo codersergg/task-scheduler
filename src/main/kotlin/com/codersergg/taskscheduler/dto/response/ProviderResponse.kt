@@ -11,7 +11,7 @@ data class ProviderResponse(
 data class ProviderWithTaskResponse(
     val id: Long,
     override var name: String,
-    val tasks: List<TaskResponseWithTask>
+    val tasks: List<TaskResponseWithDelay>
 ) : AbstractProvider(), Serializable, Responsible
 
 interface Responsible

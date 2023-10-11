@@ -39,8 +39,8 @@ object Scheduler {
                     .withNano(0)
                 val difference = Duration.between(now, midnight.plus(delay))
                 val duration = if (difference.isNegative) {
-                    logger.info { "delay: ${Duration.ofDays(task.delay.delayInDays).plus(difference)} for $task" }
-                    Duration.ofDays(task.delay.delayInDays).plus(difference).toMillis()
+                    logger.info { "delay: ${Duration.ofDays(task.delay.value).plus(difference)} for $task" }
+                    Duration.ofDays(task.delay.value).plus(difference).toMillis()
                 } else {
                     logger.info { "delay: $difference for $task" }
                     difference.toMillis()

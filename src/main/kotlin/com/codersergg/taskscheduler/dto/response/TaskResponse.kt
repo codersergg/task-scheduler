@@ -12,7 +12,7 @@ data class TaskResponse(
     var lastRun: String,
 ) : AbstractTaskResponse(), Serializable, Responsible
 
-data class TaskResponseWithTask(
+data class TaskResponseWithDelay(
     val id: Long,
     override val provider: ProviderResponse,
     override val createdAt: Instant,

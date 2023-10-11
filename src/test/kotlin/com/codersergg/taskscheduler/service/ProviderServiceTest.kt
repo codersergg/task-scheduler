@@ -49,9 +49,9 @@ class ProviderServiceTest(@Autowired val providerService: ProviderService) {
             // then
             Assertions.assertThat(allOwners.size).isEqualTo(2)
             Assertions.assertThat(allOwners[0].id).isEqualTo(1)
-            Assertions.assertThat(allOwners[0].name).isEqualTo("task name 1")
+            Assertions.assertThat(allOwners[0].name).isEqualTo("provider name 1")
             Assertions.assertThat(allOwners[1].id).isEqualTo(2)
-            Assertions.assertThat(allOwners[1].name).isEqualTo("task name 2")
+            Assertions.assertThat(allOwners[1].name).isEqualTo("provider name 2")
         }
 
         @Test
@@ -66,9 +66,9 @@ class ProviderServiceTest(@Autowired val providerService: ProviderService) {
             // then
             Assertions.assertThat(allOwners.size).isEqualTo(2)
             Assertions.assertThat(allOwners[0].id).isEqualTo(1)
-            Assertions.assertThat(allOwners[0].name).isEqualTo("task name 1")
+            Assertions.assertThat(allOwners[0].name).isEqualTo("provider name 1")
             Assertions.assertThat(allOwners[1].id).isEqualTo(2)
-            Assertions.assertThat(allOwners[1].name).isEqualTo("task name 2")
+            Assertions.assertThat(allOwners[1].name).isEqualTo("provider name 2")
         }
 
         @Test
@@ -83,7 +83,7 @@ class ProviderServiceTest(@Autowired val providerService: ProviderService) {
             // then
             Assertions.assertThat(allOwners.size).isEqualTo(2)
             Assertions.assertThat(allOwners[0].id).isEqualTo(2)
-            Assertions.assertThat(allOwners[0].name).isEqualTo("task name 2")
+            Assertions.assertThat(allOwners[0].name).isEqualTo("provider name 2")
         }
 
         @Test
@@ -98,7 +98,7 @@ class ProviderServiceTest(@Autowired val providerService: ProviderService) {
             // then
             Assertions.assertThat(allOwners.size).isEqualTo(2)
             Assertions.assertThat(allOwners[0].id).isEqualTo(2)
-            Assertions.assertThat(allOwners[0].name).isEqualTo("task name 2")
+            Assertions.assertThat(allOwners[0].name).isEqualTo("provider name 2")
         }
     }
 

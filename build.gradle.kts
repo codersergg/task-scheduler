@@ -74,7 +74,7 @@ dependencies {
     annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen:$hibernateVersion")
     kapt("org.hibernate.orm:hibernate-jpamodelgen:$hibernateVersion")
 
-    runtimeOnly("com.h2database:h2")
+    //runtimeOnly("com.h2database:h2")
     runtimeOnly("org.postgresql:postgresql")
     //implementation("org.flywaydb:flyway-core")
     implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
@@ -83,6 +83,9 @@ dependencies {
     // test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation("org.testcontainers:postgresql:1.19.1")
+    testImplementation("org.testcontainers:junit-jupiter:1.19.1")
+
 }
 
 tasks.withType<KotlinCompile> {

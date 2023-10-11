@@ -25,10 +25,27 @@ class Provider(
     }
 
     fun toProviderResponseWithTask(): ProviderWithTaskResponse {
-        return ProviderWithTaskResponse(id!!, name, tasks.map { it.toTaskResponseWithTask() })
+        return ProviderWithTaskResponse(id!!, name, tasks.map { it.toTaskResponseWithDelay() })
     }
 
-    fun toOwnerRequest(): ProviderRequest {
+    fun toProviderRequest(): ProviderRequest {
         return ProviderRequest(id!!, name)
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        if (!super.equals(other)) return false
+
+        other as Provider
+
+        return name == other.name
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + name.hashCode()
+        return result
+    }
+
 }

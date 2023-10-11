@@ -1,5 +1,7 @@
 package com.codersergg.taskscheduler.dto.request
 
+import com.codersergg.taskscheduler.dto.AbstractDelay
+import com.codersergg.taskscheduler.dto.AbstractProvider
 import com.codersergg.taskscheduler.dto.AbstractTask
 import com.codersergg.taskscheduler.dto.Duration
 import com.codersergg.taskscheduler.model.Provider
@@ -14,14 +16,14 @@ data class TaskToCreateRequest(
     var lastRun: Instant = Instant.EPOCH,
 ) : AbstractTask(), Serializable, Requestable {
     fun toTask(provider: Provider): Task {
-        return Task(provider, createdAt, lastRun, delay.value.toString())
+        return Task(provider, createdAt, lastRun, delay)
     }
 }
 
 data class TaskToUpdateRequest(
     val id: Long,
-    override var provider: ProviderRequest,
+    override var provider: AbstractProvider,
     override var createdAt: Instant = Instant.now(),
-    override val delay: Duration,
+    override val delay: AbstractDelay,
     var lastRun: Instant = Instant.now(),
 ) : AbstractTask(), Serializable, Requestable

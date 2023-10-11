@@ -3,7 +3,7 @@ package com.codersergg.taskscheduler.service
 import com.codersergg.taskscheduler.dto.Duration
 import com.codersergg.taskscheduler.dto.request.ProviderRequest
 import com.codersergg.taskscheduler.dto.request.TaskToCreateRequest
-import com.codersergg.taskscheduler.dto.response.TaskResponseWithTask
+import com.codersergg.taskscheduler.dto.response.TaskResponseWithDelay
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -23,7 +23,7 @@ internal class TaskServiceTest(@Autowired val taskService: TaskService) {
         @Test
         fun `should return TaskResponse`() {
             // when
-            val taskResponse: TaskResponseWithTask = taskService.getTask(1)
+            val taskResponse: TaskResponseWithDelay = taskService.getTask(1)
 
             // then
             Assertions.assertThat(taskResponse.id).isEqualTo(1)
@@ -39,7 +39,7 @@ internal class TaskServiceTest(@Autowired val taskService: TaskService) {
         @Test
         fun `should return List of TaskResponse`() {
             // when
-            val findAll: List<TaskResponseWithTask> = taskService.getAllTasks()
+            val findAll: List<TaskResponseWithDelay> = taskService.getAllTasks()
 
             // then
             Assertions.assertThat(findAll).isNotEmpty
@@ -56,11 +56,11 @@ internal class TaskServiceTest(@Autowired val taskService: TaskService) {
         @Test
         fun `should return TaskResponse`() {
             // given
-            val provider = ProviderRequest(3, "new task name")
+            val provider = ProviderRequest(3, "new provider name")
             val task = TaskToCreateRequest(provider, delay = Duration(5000))
 
             // when
-            val taskResponse: TaskResponseWithTask = taskService.createTask(task)
+            val taskResponse: TaskResponseWithDelay = taskService.createTask(task)
 
             // then
             Assertions.assertThat(taskResponse).isNotNull

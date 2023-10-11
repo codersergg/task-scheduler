@@ -1,10 +1,15 @@
 package com.codersergg.taskscheduler.model
 
-import com.codersergg.taskscheduler.dto.Duration
+import com.codersergg.taskscheduler.dto.AbstractDelay
+import com.codersergg.taskscheduler.dto.request.TaskToUpdateRequest
 import com.codersergg.taskscheduler.dto.response.TaskResponse
-import com.codersergg.taskscheduler.dto.response.TaskResponseWithTask
+import com.codersergg.taskscheduler.dto.response.TaskResponseWithDelay
+import com.fasterxml.jackson.annotation.JsonTypeInfo
+import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.persistence.*
 import jakarta.validation.constraints.NotNull
+import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.type.SqlTypes
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -21,23 +26,30 @@ class Task(
     var createdAt: Instant,
     @Column(name = "lastRun", nullable = false)
     var lastRun: Instant,
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
     @Column(name = "delay", nullable = false)
-    var delay: String,
+    @JdbcTypeCode(SqlTypes.JSON)
+    var delay: AbstractDelay,
     @Version
     var lastUpdated: LocalDateTime = LocalDateTime.now()
 ) : BaseEntity<Long>() {
 
-    fun toTaskResponse(): TaskResponse {
-        return TaskResponse(id!!, createdAt, convertInstantToString(lastRun))
-    }
-
-    fun toTaskResponseWithTask(): TaskResponseWithTask {
-        return TaskResponseWithTask(
+    fun toTaskResponseWithDelay(): TaskResponseWithDelay {
+        return TaskResponseWithDelay(
             id!!,
             provider.toProviderResponse(),
             createdAt,
-            Duration(delay.toLong()),
+            delay,
             convertInstantToString(lastRun)
+        )
+    }
+
+    fun toTaskRequestWithDelay(): TaskToUpdateRequest {
+        return TaskToUpdateRequest(
+            id!!,
+            provider.toProviderResponse(),
+            createdAt,
+            delay
         )
     }
 
@@ -46,5 +58,25 @@ class Task(
         val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern(format)
             .withZone(ZoneId.systemDefault())
         return formatter.format(instant)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        if (!super.equals(other)) return false
+
+        other as Task
+
+        if (provider != other.provider) return false
+        if (createdAt != other.createdAt) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + provider.hashCode()
+        result = 31 * result + createdAt.hashCode()
+        return result
     }
 }
