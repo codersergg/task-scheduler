@@ -2,14 +2,10 @@ package com.codersergg.taskscheduler.model
 
 import com.codersergg.taskscheduler.dto.AbstractDelay
 import com.codersergg.taskscheduler.dto.PathResponse
-import com.codersergg.taskscheduler.dto.RestTask
-import com.codersergg.taskscheduler.dto.request.TaskToCreateRequest
 import com.codersergg.taskscheduler.dto.request.TaskToUpdateRequest
-import com.codersergg.taskscheduler.dto.response.TaskResponse
 import com.codersergg.taskscheduler.dto.response.TaskResponseWithDelay
 import com.fasterxml.jackson.annotation.JsonBackReference
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.persistence.*
 import jakarta.validation.constraints.NotNull
 import org.hibernate.annotations.JdbcTypeCode

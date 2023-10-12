@@ -2,7 +2,6 @@ package com.codersergg.taskscheduler.service
 
 import com.codersergg.taskscheduler.dto.Duration
 import com.codersergg.taskscheduler.dto.RestPathResponse
-import com.codersergg.taskscheduler.dto.Timer
 import com.codersergg.taskscheduler.dto.request.ProviderRequestToAdd
 import com.codersergg.taskscheduler.dto.response.ProviderResponse
 import com.codersergg.taskscheduler.dto.response.ProviderWithTaskResponse
@@ -28,7 +27,6 @@ import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import java.net.URI
-import java.time.Instant
 
 @SpringBootTest
 @AutoConfigureMockMvc

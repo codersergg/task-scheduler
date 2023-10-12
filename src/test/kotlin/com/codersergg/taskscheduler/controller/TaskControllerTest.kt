@@ -2,7 +2,6 @@ package com.codersergg.taskscheduler.controller
 
 import com.codersergg.taskscheduler.dto.Duration
 import com.codersergg.taskscheduler.dto.RestPathResponse
-import com.codersergg.taskscheduler.dto.Timer
 import com.codersergg.taskscheduler.dto.request.ProviderRequest
 import com.codersergg.taskscheduler.dto.request.TaskToCreateRequest
 import com.codersergg.taskscheduler.dto.request.TaskToUpdateRequest
@@ -25,7 +24,6 @@ import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import java.net.URI
-import java.time.Instant
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -162,7 +160,11 @@ internal class TaskControllerTest
         fun `should add Task`() {
             // given
             val owner3 = ProviderRequest(3, "provider name 3")
-            val task = TaskToCreateRequest(owner3, delay = Duration(5000), pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")))
+            val task = TaskToCreateRequest(
+                owner3,
+                delay = Duration(5000),
+                pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+            )
 
             // when
             val postRequest = mockMvc.post("/api/task") {
@@ -194,7 +196,12 @@ internal class TaskControllerTest
             // given
             val taskId: Long = 1
             val provider = ProviderRequest(100, "task name will not be updated")
-            val task = TaskToUpdateRequest(taskId, provider, delay = Duration(5000), pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")))
+            val task = TaskToUpdateRequest(
+                taskId,
+                provider,
+                delay = Duration(5000),
+                pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+            )
 
             // when
             val putRequest =
@@ -232,7 +239,11 @@ internal class TaskControllerTest
         fun `should delete Task`() {
 
             val provider2 = Provider("provider name 2")
-            val task = Task(provider2, delay = Duration(5), pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")))
+            val task = Task(
+                provider2,
+                delay = Duration(5),
+                pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+            )
 
             // when
             mockMvc.post("/api/task") {

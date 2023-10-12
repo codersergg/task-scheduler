@@ -1,7 +1,6 @@
 package com.codersergg.taskscheduler.controller
 
 import com.codersergg.taskscheduler.dto.request.TaskToUpdateRequest
-import com.codersergg.taskscheduler.dto.response.TaskResponse
 import com.codersergg.taskscheduler.dto.response.TaskResponseWithDelay
 import com.codersergg.taskscheduler.model.Task
 import com.codersergg.taskscheduler.service.TaskService
