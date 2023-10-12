@@ -1,25 +1,26 @@
 package com.codersergg.taskscheduler.scheduler
 
 import com.codersergg.taskscheduler.dto.DefaultProvider
-import com.codersergg.taskscheduler.dto.DurationRestTask
 import com.codersergg.taskscheduler.dto.Duration
+import com.codersergg.taskscheduler.dto.DurationRestTask
 import kotlinx.coroutines.*
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.time.withTimeout
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.*
 import java.net.URI
 import java.time.Instant
 
-class SchedulerTest {
+internal class SchedulerTest {
 
     @Nested
     @DisplayName("Scheduler run simple test")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     inner class RunSimpleTask {
 
+        @OptIn(DelicateCoroutinesApi::class)
         @Test
-        @DelicateCoroutinesApi
-        fun `should print simple text`() {
+        fun `should print simple text`() = runTest {
             // given
             var count = 0
             var result = 0
@@ -60,12 +61,14 @@ class SchedulerTest {
                         ++count
                         ++count
                     }
+                    // then
+                    assertTimeoutPreemptively(java.time.Duration.ofMillis(8 * timeMillis)) {
+                        runTest {
+                            delay(7 * timeMillis)
+                            Assertions.assertThat(count).isLessThanOrEqualTo(result)
+                        }
+                    }
                 }
-            }
-            // then
-            runBlocking {
-                delay(7 * timeMillis)
-                Assertions.assertThat(count).isLessThanOrEqualTo(result)
             }
         }
     }

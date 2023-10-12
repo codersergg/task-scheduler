@@ -1,18 +1,11 @@
 package com.codersergg.taskscheduler.configuration
 
-import com.codersergg.taskscheduler.dto.Duration
-import com.codersergg.taskscheduler.dto.Timer
-import com.codersergg.taskscheduler.model.Provider
-import com.codersergg.taskscheduler.model.Task
 import com.codersergg.taskscheduler.repository.ProviderRepository
 import com.codersergg.taskscheduler.repository.TaskRepository
 import org.springframework.boot.ApplicationRunner
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.Bean
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
-import org.springframework.transaction.annotation.Transactional
-import java.time.Instant
-
 
 @org.springframework.context.annotation.Configuration
 @EnableJpaRepositories("com.codersergg.taskscheduler.repository")
@@ -36,10 +29,10 @@ class Configuration {
         taskRepository.saveAndFlush(Task(provider1, Instant.now(), Instant.EPOCH, Duration(5)))
         taskRepository.saveAndFlush(Task(provider2, Instant.now(), Instant.EPOCH, Duration(5)))
         taskRepository.saveAndFlush(Task(provider3, Instant.now(), Instant.EPOCH, Timer(1, 2, 11, 30)))
-
+*/
 
 
         val tasks = taskRepository.findAllByOrderById()
-        tasks.forEach { println(it.toTaskResponseWithDelay()) }*/
+        tasks.forEach { println(it.toTaskResponseWithDelay()) }
     }
 }

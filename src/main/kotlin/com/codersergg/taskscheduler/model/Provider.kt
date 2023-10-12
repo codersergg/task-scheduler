@@ -20,6 +20,10 @@ class Provider(
     @Version
     var lastUpdated: LocalDateTime = LocalDateTime.now()
 ) : BaseEntity<Long>(), Serializable {
+
+    constructor(id: Long, name: String, lastUpdated: LocalDateTime) : this(name, lastUpdated = lastUpdated) {
+        super.id = id
+    }
     fun toProviderResponse(): ProviderResponse {
         return ProviderResponse(id!!, name)
     }

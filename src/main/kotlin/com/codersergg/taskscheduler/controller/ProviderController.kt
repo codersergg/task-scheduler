@@ -22,12 +22,12 @@ class ProviderController(private val providerService: ProviderService) {
 
     @GetMapping
     fun getAllProvider(@RequestParam firstResult: Int?, @RequestParam maxResult: Int?): List<ProviderResponse> {
-        return providerService.getAllOwners(RequestParameters(Pagination(firstResult ?: 0, maxResult ?: 20)))
+        return providerService.getAllProviders(RequestParameters(Pagination(firstResult ?: 0, maxResult ?: 20)))
     }
 
     @PostMapping
     fun getAllProvider(@RequestBody params: RequestParameters?): List<ProviderResponse> {
-        return providerService.getAllOwners(params ?: RequestParameters())
+        return providerService.getAllProviders(params ?: RequestParameters())
     }
 
     @GetMapping("/task")
@@ -35,19 +35,19 @@ class ProviderController(private val providerService: ProviderService) {
         @RequestParam firstResult: Int?,
         @RequestParam maxResult: Int?
     ): List<ProviderWithTaskResponse> {
-        return providerService.getAllOwnersWithTask(RequestParameters(Pagination(firstResult ?: 0, maxResult ?: 20)))
+        return providerService.getAllProvidersWithTask(RequestParameters(Pagination(firstResult ?: 0, maxResult ?: 20)))
     }
 
     @PostMapping("/task")
     fun getAllProviderWithTasks(@RequestBody params: RequestParameters?): List<ProviderWithTaskResponse> {
         println("params: $params")
-        return providerService.getAllOwnersWithTask(params ?: RequestParameters())
+        return providerService.getAllProvidersWithTask(params ?: RequestParameters())
     }
 
     @GetMapping("/{id}")
-    fun getProvider(@PathVariable id: Long): ProviderResponse = providerService.getOwner(id)
+    fun getProvider(@PathVariable id: Long): ProviderResponse = providerService.getProvider(id)
 
     @GetMapping("/{id}/task")
-    fun getProviderWithTask(@PathVariable id: Long): ProviderWithTaskResponse = providerService.getOwnerWithTasks(id)
+    fun getProviderWithTask(@PathVariable id: Long): ProviderWithTaskResponse = providerService.getProviderWithTasks(id)
 }
 

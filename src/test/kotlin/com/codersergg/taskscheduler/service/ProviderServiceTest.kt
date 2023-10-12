@@ -1,146 +1,203 @@
 package com.codersergg.taskscheduler.service
 
+import com.codersergg.taskscheduler.dto.Duration
+import com.codersergg.taskscheduler.dto.Timer
+import com.codersergg.taskscheduler.dto.request.ProviderRequestToAdd
 import com.codersergg.taskscheduler.dto.response.ProviderResponse
 import com.codersergg.taskscheduler.dto.response.ProviderWithTaskResponse
+import com.codersergg.taskscheduler.model.Provider
+import com.codersergg.taskscheduler.model.Task
 import com.codersergg.taskscheduler.repository.Pagination
+import com.codersergg.taskscheduler.repository.ProviderRepository
 import com.codersergg.taskscheduler.repository.RequestParameters
+import com.codersergg.taskscheduler.repository.TaskRepository
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.annotation.DirtiesContext
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
+import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.junit.jupiter.Testcontainers
+import java.time.Instant
 
 @SpringBootTest
-class ProviderServiceTest(@Autowired val providerService: ProviderService) {
+@AutoConfigureMockMvc
+@Testcontainers
+@DirtiesContext
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+class ProviderServiceTest
+@Autowired constructor(
+    val providerService: ProviderService,
+    providerRepository: ProviderRepository,
+    taskRepository: TaskRepository
+) {
+    companion object {
+        @Container
+        private val postgreSQLContainer = PostgreSQLContainer<Nothing>("postgres:latest")
+
+        @DynamicPropertySource
+        @JvmStatic
+        fun registerDynamicProperties(registry: DynamicPropertyRegistry) {
+            registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl)
+            registry.add("spring.datasource.username", postgreSQLContainer::getUsername)
+            registry.add("spring.datasource.password", postgreSQLContainer::getPassword)
+        }
+    }
+
+    init {
+        if (providerRepository.findAll().isEmpty()) {
+            val provider1 = providerRepository.save(Provider("provider name 1"))
+            val provider2 = providerRepository.save(Provider("provider name 2"))
+            val provider3 = providerRepository.save(Provider("provider name 3"))
+
+            val createdAt = Instant.now()
+            taskRepository.saveAndFlush(Task(provider1, createdAt, Instant.EPOCH, Duration(5)))
+            taskRepository.save(Task(provider1, Instant.now(), Instant.EPOCH, Duration(5))).toTaskResponseWithDelay()
+            taskRepository.save(Task(provider1, Instant.now(), Instant.EPOCH, Duration(5)))
+            taskRepository.save(Task(provider2, Instant.now(), Instant.EPOCH, Duration(5)))
+            taskRepository.save(Task(provider3, Instant.now(), Instant.EPOCH, Timer(1, 2, 11, 30)))
+        }
+    }
+
     @Nested
-    @DisplayName("getAllOwners()")
+    @DisplayName("getAllProvider()")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    inner class GetAllOwners {
+    inner class GetAllProvider {
 
         @Test
-        fun `should return List of Owners`() {
+        fun `should return List of Providers`() {
             // when
-            val allOwners = providerService.getAllOwners(RequestParameters())
+            val providers = providerService.getAllProviders(RequestParameters())
 
             // then
-            Assertions.assertThat(allOwners.size).isEqualTo(3)
+            Assertions.assertThat(providers.size).isEqualTo(3)
         }
 
         @Test
-        fun `should return List of OwnersWithTask`() {
+        fun `should return List of ProviderWithTask`() {
             // when
-            val allOwners = providerService.getAllOwnersWithTask(RequestParameters())
+            val providers = providerService.getAllProvidersWithTask(RequestParameters())
 
             // then
-            Assertions.assertThat(allOwners.size).isEqualTo(3)
+            Assertions.assertThat(providers.size).isEqualTo(3)
         }
 
         @Test
-        fun `should return List of Owners containing 2 elements from the first`() {
+        fun `should return List of Providers containing 2 elements from the first`() {
             // when
-            val allOwners = providerService.getAllOwners(
+            val providers = providerService.getAllProviders(
                 RequestParameters(
                     pagination = Pagination(0, 2)
                 )
             )
 
             // then
-            Assertions.assertThat(allOwners.size).isEqualTo(2)
-            Assertions.assertThat(allOwners[0].id).isEqualTo(1)
-            Assertions.assertThat(allOwners[0].name).isEqualTo("provider name 1")
-            Assertions.assertThat(allOwners[1].id).isEqualTo(2)
-            Assertions.assertThat(allOwners[1].name).isEqualTo("provider name 2")
+            Assertions.assertThat(providers.size).isEqualTo(2)
+            Assertions.assertThat(providers[0].id).isEqualTo(1)
+            Assertions.assertThat(providers[0].name).isEqualTo("provider name 1")
+            Assertions.assertThat(providers[1].id).isEqualTo(2)
+            Assertions.assertThat(providers[1].name).isEqualTo("provider name 2")
         }
 
         @Test
-        fun `should return List of Owners containing 2 elements from the second`() {
+        fun `should return List of Providers containing 2 elements from the second`() {
             // when
-            val allOwners = providerService.getAllOwners(
+            val providers = providerService.getAllProviders(
                 RequestParameters(
                     pagination = Pagination(0, 2)
                 )
             )
 
             // then
-            Assertions.assertThat(allOwners.size).isEqualTo(2)
-            Assertions.assertThat(allOwners[0].id).isEqualTo(1)
-            Assertions.assertThat(allOwners[0].name).isEqualTo("provider name 1")
-            Assertions.assertThat(allOwners[1].id).isEqualTo(2)
-            Assertions.assertThat(allOwners[1].name).isEqualTo("provider name 2")
+            Assertions.assertThat(providers.size).isEqualTo(2)
+            Assertions.assertThat(providers[0].id).isEqualTo(1)
+            Assertions.assertThat(providers[0].name).isEqualTo("provider name 1")
+            Assertions.assertThat(providers[1].id).isEqualTo(2)
+            Assertions.assertThat(providers[1].name).isEqualTo("provider name 2")
         }
 
         @Test
-        fun `should return List of OwnersWithTask containing 1 elements from the first`() {
+        fun `should return List of ProvidersWithTask containing 1 elements from the first`() {
             // when
-            val allOwners = providerService.getAllOwnersWithTask(
+            val providers = providerService.getAllProvidersWithTask(
                 RequestParameters(
                     pagination = Pagination(1, 2)
                 )
             )
 
             // then
-            Assertions.assertThat(allOwners.size).isEqualTo(2)
-            Assertions.assertThat(allOwners[0].id).isEqualTo(2)
-            Assertions.assertThat(allOwners[0].name).isEqualTo("provider name 2")
+            Assertions.assertThat(providers.size).isEqualTo(2)
+            Assertions.assertThat(providers[0].id).isEqualTo(2)
+            Assertions.assertThat(providers[0].name).isEqualTo("provider name 2")
         }
 
         @Test
-        fun `should return List of OwnersWithTask containing 1 elements from the second`() {
+        fun `should return List of ProvidersWithTask containing 1 elements from the second`() {
             // when
-            val allOwners = providerService.getAllOwnersWithTask(
+            val providers = providerService.getAllProvidersWithTask(
                 RequestParameters(
                     pagination = Pagination(1, 2)
                 )
             )
 
             // then
-            Assertions.assertThat(allOwners.size).isEqualTo(2)
-            Assertions.assertThat(allOwners[0].id).isEqualTo(2)
-            Assertions.assertThat(allOwners[0].name).isEqualTo("provider name 2")
+            Assertions.assertThat(providers.size).isEqualTo(2)
+            Assertions.assertThat(providers[0].id).isEqualTo(2)
+            Assertions.assertThat(providers[0].name).isEqualTo("provider name 2")
         }
     }
 
     @Nested
-    @DisplayName("getOwner(id: Long)")
+    @DisplayName("getProvider(id: Long)")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    inner class GetOwnerById {
+    inner class GetProviderById {
 
         @Test
-        fun `should return Owner`() {
+        fun `should return Provider`() {
             // when
-            val owner = providerService.getOwner(1)
+            val provider = providerService.getProvider(1)
 
             // then
-            Assertions.assertThat(owner).isInstanceOf(ProviderResponse::class.java)
-            Assertions.assertThat(owner.id).isEqualTo(1)
+            Assertions.assertThat(provider).isInstanceOf(ProviderResponse::class.java)
+            Assertions.assertThat(provider.id).isEqualTo(1)
         }
 
         @Test
-        fun `should return OwnerWithTask`() {
+        fun `should return ProvidersWithTask`() {
             // when
-            val owner = providerService.getOwnerWithTasks(2)
+            val provider = providerService.getProviderWithTasks(2)
 
             // then
-            Assertions.assertThat(owner).isInstanceOf(ProviderWithTaskResponse::class.java)
-            Assertions.assertThat(owner.id).isEqualTo(2)
+            Assertions.assertThat(provider).isInstanceOf(ProviderWithTaskResponse::class.java)
+            Assertions.assertThat(provider.id).isEqualTo(2)
         }
     }
 
-    /*@Nested
-    @DisplayName("createOwner()")
+    @Nested
+    @DisplayName("createProvider()")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    inner class CreateOwner {
+    inner class CreateProvider {
 
         @Test
-        fun `should return Owner`() {
+        fun `should create Provider`() {
             // when
-            val owner = ownerService.createOwner(OwnerRequestToAdd("new task name"))
+            val name = "new Provider name"
+            val provider = providerService.createProvider(ProviderRequestToAdd(name))
 
             // then
-            Assertions.assertThat(owner).isInstanceOf(OwnerResponse::class.java)
-            Assertions.assertThat(owner.id).isEqualTo(1)
+            Assertions.assertThat(provider).isInstanceOf(ProviderResponse::class.java)
+            Assertions.assertThat(provider.id).isEqualTo(4)
+            Assertions.assertThat(provider.name).isEqualTo(name)
+
+            providerService.delete(provider.id)
         }
-    }*/
+    }
 }

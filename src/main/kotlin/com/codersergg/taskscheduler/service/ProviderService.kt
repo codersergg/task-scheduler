@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class ProviderService(@PersistenceContext private val em: EntityManager) {
 
-    fun getAllOwners(params: RequestParameters): List<ProviderResponse> {
+    fun getAllProviders(params: RequestParameters): List<ProviderResponse> {
         val session = em.unwrap(Session::class.java)
 
         val resultList = session.createSelectionQuery("SELECT p FROM Provider p", Provider::class.java)
@@ -33,7 +33,7 @@ class ProviderService(@PersistenceContext private val em: EntityManager) {
             .map { it.toProviderResponse() }
     }
 
-    fun getAllOwnersWithTask(params: RequestParameters): List<ProviderWithTaskResponse> {
+    fun getAllProvidersWithTask(params: RequestParameters): List<ProviderWithTaskResponse> {
         val session = em.unwrap(Session::class.java)
         val ids = session
             .createQuery("SELECT p.id FROM Provider p", Long::class.java)
@@ -54,14 +54,14 @@ class ProviderService(@PersistenceContext private val em: EntityManager) {
             .map { it.toProviderResponseWithTask() }
     }
 
-    fun getOwner(id: Long): ProviderResponse {
+    fun getProvider(id: Long): ProviderResponse {
         val session = em.unwrap(Session::class.java)
         val find = session.find(Provider::class.java, id)
         return find?.toProviderResponse()
             ?: throw NotFoundException()
     }
 
-    fun getOwnerWithTasks(id: Long): ProviderWithTaskResponse {
+    fun getProviderWithTasks(id: Long): ProviderWithTaskResponse {
         val session = em.unwrap(Session::class.java)
         val graph = session.createEntityGraph(Provider::class.java)
         graph.addPluralSubgraph(Provider_.tasks).addSubgraph(Task_.provider)
@@ -70,7 +70,18 @@ class ProviderService(@PersistenceContext private val em: EntityManager) {
             ?: throw NotFoundException()
     }
 
-    fun createOwner(ownerRequestToAdd: ProviderRequestToAdd): ProviderResponse {
-        throw Exception()
+    @Transactional
+    fun createProvider(providerRequestToAdd: ProviderRequestToAdd): ProviderResponse {
+        val session = em.unwrap(Session::class.java)
+        val provider = providerRequestToAdd.toProvider()
+        session.persist(provider)
+        return provider.toProviderResponse()
+    }
+
+    @Transactional
+    fun delete(id: Long) {
+        val session = em.unwrap(Session::class.java)
+        val provider = session.byId(Provider::class.java).load(id)
+        session.remove(provider)
     }
 }

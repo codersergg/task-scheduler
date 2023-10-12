@@ -7,11 +7,7 @@ import java.io.Serializable
 data class ProviderRequest(
     val id: Long,
     override var name: String,
-) : AbstractProvider(), Serializable, Requestable {
-    fun toProvider(): Provider {
-        return Provider(name)
-    }
-}
+) : AbstractProvider(), Serializable, Requestable
 
 data class ProviderRequestToAdd(
     override var name: String,
