@@ -1,9 +1,13 @@
 package com.codersergg.taskscheduler.model
 
 import com.codersergg.taskscheduler.dto.AbstractDelay
+import com.codersergg.taskscheduler.dto.PathResponse
+import com.codersergg.taskscheduler.dto.RestTask
+import com.codersergg.taskscheduler.dto.request.TaskToCreateRequest
 import com.codersergg.taskscheduler.dto.request.TaskToUpdateRequest
 import com.codersergg.taskscheduler.dto.response.TaskResponse
 import com.codersergg.taskscheduler.dto.response.TaskResponseWithDelay
+import com.fasterxml.jackson.annotation.JsonBackReference
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.persistence.*
@@ -21,35 +25,43 @@ class Task(
     @NotNull
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "providerId")
+    @JsonBackReference
     var provider: Provider,
-    @Column(name = "createdAt", nullable = false)
-    var createdAt: Instant,
-    @Column(name = "lastRun", nullable = false)
-    var lastRun: Instant,
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
     @Column(name = "delay", nullable = false)
     @JdbcTypeCode(SqlTypes.JSON)
     var delay: AbstractDelay,
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+    @Column(name = "pathResponse", nullable = false)
+    @JdbcTypeCode(SqlTypes.JSON)
+    var pathResponse: PathResponse,
+    @Column(name = "createdAt", nullable = false)
+    var createdAt: Instant = Instant.now(),
+    @Column(name = "lastRun", nullable = false)
+    var lastRun: Instant = Instant.EPOCH,
     @Version
     var lastUpdated: LocalDateTime = LocalDateTime.now()
 ) : BaseEntity<Long>() {
 
     fun toTaskResponseWithDelay(): TaskResponseWithDelay {
         return TaskResponseWithDelay(
-            id!!,
-            provider.toProviderResponse(),
-            createdAt,
-            delay,
-            convertInstantToString(lastRun)
+            id = id!!,
+            provider = provider.toProviderResponse(),
+            delay = delay,
+            pathResponse = pathResponse,
+            lastRun = convertInstantToString(lastRun),
+            createdAt = createdAt,
         )
     }
 
     fun toTaskRequestWithDelay(): TaskToUpdateRequest {
         return TaskToUpdateRequest(
-            id!!,
-            provider.toProviderResponse(),
-            createdAt,
-            delay
+            id = id!!,
+            provider = provider.toProviderResponse(),
+            delay = delay,
+            pathResponse = pathResponse,
+            lastRun = lastRun,
+            createdAt = createdAt,
         )
     }
 

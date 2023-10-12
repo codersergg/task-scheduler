@@ -1,14 +1,13 @@
 package com.codersergg.taskscheduler.service
 
 import com.codersergg.taskscheduler.dto.Duration
-import com.codersergg.taskscheduler.dto.Timer
-import com.codersergg.taskscheduler.dto.request.ProviderRequest
-import com.codersergg.taskscheduler.dto.request.TaskToCreateRequest
+import com.codersergg.taskscheduler.dto.RestPathResponse
 import com.codersergg.taskscheduler.dto.response.TaskResponseWithDelay
 import com.codersergg.taskscheduler.model.Provider
 import com.codersergg.taskscheduler.model.Task
 import com.codersergg.taskscheduler.repository.ProviderRepository
 import com.codersergg.taskscheduler.repository.TaskRepository
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,7 +19,7 @@ import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
-import java.time.Instant
+import java.net.URI
 
 @SpringBootTest
 @Testcontainers
@@ -58,12 +57,41 @@ internal class TaskServiceTest
             val provider2 = providerRepository.save(Provider("provider name 2"))
             val provider3 = providerRepository.save(Provider("provider name 3"))
 
-            val createdAt = Instant.now()
-            taskRepository.saveAndFlush(Task(provider1, createdAt, Instant.EPOCH, Duration(5)))
-            taskRepository.save(Task(provider1, Instant.now(), Instant.EPOCH, Duration(5))).toTaskResponseWithDelay()
-            taskRepository.save(Task(provider1, Instant.now(), Instant.EPOCH, Duration(5)))
-            taskRepository.save(Task(provider2, Instant.now(), Instant.EPOCH, Duration(5)))
-            taskRepository.save(Task(provider3, Instant.now(), Instant.EPOCH, Timer(1, 2, 11, 30)))
+            taskRepository.save(
+                Task(
+                    provider = provider1,
+                    delay = Duration(5),
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                )
+            )
+            taskRepository.save(
+                Task(
+                    provider = provider1,
+                    delay = Duration(5),
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                )
+            )
+            taskRepository.save(
+                Task(
+                    provider = provider1,
+                    delay = Duration(5),
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                )
+            )
+            taskRepository.save(
+                Task(
+                    provider = provider2,
+                    delay = Duration(5),
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                )
+            )
+            taskRepository.save(
+                Task(
+                    provider = provider3,
+                    delay = Duration(5),
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                )
+            )
         }
     }
 
@@ -106,17 +134,49 @@ internal class TaskServiceTest
     inner class CreateTask {
 
         @Test
-        fun `should return TaskResponse`() {
+        fun `should create new Provider and Task, return TaskResponse`() = runTest {
             // given
-            val provider = ProviderRequest(3, "new provider name")
-            val task = TaskToCreateRequest(provider, delay = Duration(5000))
+            val name = "New Provider"
+            val provider = Provider(name)
+            val task = Task(
+                provider,
+                delay = Duration(5000),
+                pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+            )
 
             // when
-            val taskResponse: TaskResponseWithDelay = taskService.createTask(task)
+            val taskResponse = taskService.createTask(task)
 
             // then
             Assertions.assertThat(taskResponse).isNotNull
             Assertions.assertThat(taskResponse.createdAt).isNotNull
+            Assertions.assertThat(taskResponse.provider.name).isEqualTo(name)
+            Assertions.assertThat(taskResponse.delay.value).isEqualTo(5000L)
+            //Assertions.assertThat(taskResponse.lastRun).isEqualTo(Instant.EPOCH)
+            //Assertions.assertThat(Instant.now()).isAfter(taskResponse.createdAt)
+        }
+
+        @Test
+        fun `should create new Task and use old Provider, return TaskResponse`() = runTest {
+            // given
+            val name = "provider name 3"
+            val provider = Provider(name)
+            val task = Task(
+                provider,
+                delay = Duration(5000),
+                pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+            )
+
+            // when
+            val taskResponse = taskService.createTask(task)
+
+            // then
+            Assertions.assertThat(taskResponse).isNotNull
+            Assertions.assertThat(taskResponse.createdAt).isNotNull
+            Assertions.assertThat(taskResponse.provider.name).isEqualTo(name)
+            Assertions.assertThat(taskResponse.delay.value).isEqualTo(5000L)
+            //Assertions.assertThat(taskResponse.lastRun).isEqualTo(Instant.EPOCH)
+            //Assertions.assertThat(Instant.now()).isAfter(taskResponse.createdAt)
         }
     }
 }

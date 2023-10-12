@@ -3,6 +3,7 @@ package com.codersergg.taskscheduler.model
 import com.codersergg.taskscheduler.dto.request.ProviderRequest
 import com.codersergg.taskscheduler.dto.response.ProviderResponse
 import com.codersergg.taskscheduler.dto.response.ProviderWithTaskResponse
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import jakarta.persistence.*
 import org.hibernate.annotations.NaturalId
 import java.io.Serializable
@@ -16,6 +17,7 @@ class Provider(
     @NaturalId
     var name: String,
     @OneToMany(mappedBy = "provider")
+    @JsonManagedReference
     var tasks: MutableList<Task> = mutableListOf(),
     @Version
     var lastUpdated: LocalDateTime = LocalDateTime.now()

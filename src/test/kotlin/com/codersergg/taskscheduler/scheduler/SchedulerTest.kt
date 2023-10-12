@@ -3,6 +3,7 @@ package com.codersergg.taskscheduler.scheduler
 import com.codersergg.taskscheduler.dto.DefaultProvider
 import com.codersergg.taskscheduler.dto.Duration
 import com.codersergg.taskscheduler.dto.DurationRestTask
+import com.codersergg.taskscheduler.dto.RestPathResponse
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.time.withTimeout
@@ -43,16 +44,16 @@ internal class SchedulerTest {
                             function1, DurationRestTask(
                                 DefaultProvider("Provider name"),
                                 Instant.now(),
-                                URI("http://localhost:8080/api/test"),
-                                Duration(timeMillis)
+                                Duration(timeMillis),
+                                pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")),
                             )
                         )
                         Scheduler.run(
                             function2, DurationRestTask(
                                 DefaultProvider("Other provider name"),
                                 Instant.now(),
-                                URI("http://localhost:8080/api/test"),
-                                Duration(timeMillis)
+                                Duration(timeMillis),
+                                pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")),
                             )
                         )
                     }

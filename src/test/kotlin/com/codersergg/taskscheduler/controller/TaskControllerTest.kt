@@ -1,6 +1,7 @@
 package com.codersergg.taskscheduler.controller
 
 import com.codersergg.taskscheduler.dto.Duration
+import com.codersergg.taskscheduler.dto.RestPathResponse
 import com.codersergg.taskscheduler.dto.Timer
 import com.codersergg.taskscheduler.dto.request.ProviderRequest
 import com.codersergg.taskscheduler.dto.request.TaskToCreateRequest
@@ -23,6 +24,7 @@ import org.springframework.test.web.servlet.*
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import java.net.URI
 import java.time.Instant
 
 @SpringBootTest
@@ -62,12 +64,41 @@ internal class TaskControllerTest
             val provider2 = providerRepository.save(Provider("provider name 2"))
             val provider3 = providerRepository.save(Provider("provider name 3"))
 
-            val createdAt = Instant.now()
-            taskRepository.saveAndFlush(Task(provider1, createdAt, Instant.EPOCH, Duration(5)))
-            taskRepository.save(Task(provider1, Instant.now(), Instant.EPOCH, Duration(5))).toTaskResponseWithDelay()
-            taskRepository.save(Task(provider1, Instant.now(), Instant.EPOCH, Duration(5)))
-            taskRepository.save(Task(provider2, Instant.now(), Instant.EPOCH, Duration(5)))
-            taskRepository.save(Task(provider3, Instant.now(), Instant.EPOCH, Timer(1, 2, 11, 30)))
+            taskRepository.save(
+                Task(
+                    provider = provider1,
+                    delay = Duration(5),
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                )
+            )
+            taskRepository.save(
+                Task(
+                    provider = provider1,
+                    delay = Duration(5),
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                )
+            )
+            taskRepository.save(
+                Task(
+                    provider = provider1,
+                    delay = Duration(5),
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                )
+            )
+            taskRepository.save(
+                Task(
+                    provider = provider2,
+                    delay = Duration(5),
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                )
+            )
+            taskRepository.save(
+                Task(
+                    provider = provider3,
+                    delay = Duration(5),
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                )
+            )
         }
     }
 
@@ -131,7 +162,7 @@ internal class TaskControllerTest
         fun `should add Task`() {
             // given
             val owner3 = ProviderRequest(3, "provider name 3")
-            val task = TaskToCreateRequest(owner3, delay = Duration(5000))
+            val task = TaskToCreateRequest(owner3, delay = Duration(5000), pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")))
 
             // when
             val postRequest = mockMvc.post("/api/task") {
@@ -163,7 +194,7 @@ internal class TaskControllerTest
             // given
             val taskId: Long = 1
             val provider = ProviderRequest(100, "task name will not be updated")
-            val task = TaskToUpdateRequest(taskId, provider, delay = Duration(5000))
+            val task = TaskToUpdateRequest(taskId, provider, delay = Duration(5000), pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")))
 
             // when
             val putRequest =
@@ -201,7 +232,7 @@ internal class TaskControllerTest
         fun `should delete Task`() {
 
             val provider2 = Provider("provider name 2")
-            val task = Task(provider2, Instant.now(), Instant.EPOCH, Duration(5))
+            val task = Task(provider2, delay = Duration(5), pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")))
 
             // when
             mockMvc.post("/api/task") {

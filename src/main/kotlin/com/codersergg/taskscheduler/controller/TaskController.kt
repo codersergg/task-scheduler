@@ -1,9 +1,9 @@
 package com.codersergg.taskscheduler.controller
 
-import com.codersergg.taskscheduler.dto.RestTask
-import com.codersergg.taskscheduler.dto.request.TaskToCreateRequest
 import com.codersergg.taskscheduler.dto.request.TaskToUpdateRequest
+import com.codersergg.taskscheduler.dto.response.TaskResponse
 import com.codersergg.taskscheduler.dto.response.TaskResponseWithDelay
+import com.codersergg.taskscheduler.model.Task
 import com.codersergg.taskscheduler.service.TaskService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -28,7 +28,7 @@ class TaskController(private val taskService: TaskService) {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun createTask(@RequestBody task: TaskToCreateRequest): TaskResponseWithDelay = taskService.createTask(task)
+    fun createTask(@RequestBody task: Task): TaskResponseWithDelay = taskService.createTask(task)
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)

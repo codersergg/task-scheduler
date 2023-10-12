@@ -1,5 +1,6 @@
 package com.codersergg.taskscheduler.dto
 
+import com.codersergg.taskscheduler.dto.request.TaskToCreateRequest
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import java.io.Serializable

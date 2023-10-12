@@ -1,6 +1,7 @@
 package com.codersergg.taskscheduler.service
 
 import com.codersergg.taskscheduler.dto.Duration
+import com.codersergg.taskscheduler.dto.RestPathResponse
 import com.codersergg.taskscheduler.dto.Timer
 import com.codersergg.taskscheduler.dto.request.ProviderRequestToAdd
 import com.codersergg.taskscheduler.dto.response.ProviderResponse
@@ -26,6 +27,7 @@ import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import java.net.URI
 import java.time.Instant
 
 @SpringBootTest
@@ -58,12 +60,41 @@ class ProviderServiceTest
             val provider2 = providerRepository.save(Provider("provider name 2"))
             val provider3 = providerRepository.save(Provider("provider name 3"))
 
-            val createdAt = Instant.now()
-            taskRepository.saveAndFlush(Task(provider1, createdAt, Instant.EPOCH, Duration(5)))
-            taskRepository.save(Task(provider1, Instant.now(), Instant.EPOCH, Duration(5))).toTaskResponseWithDelay()
-            taskRepository.save(Task(provider1, Instant.now(), Instant.EPOCH, Duration(5)))
-            taskRepository.save(Task(provider2, Instant.now(), Instant.EPOCH, Duration(5)))
-            taskRepository.save(Task(provider3, Instant.now(), Instant.EPOCH, Timer(1, 2, 11, 30)))
+            taskRepository.save(
+                Task(
+                    provider = provider1,
+                    delay = Duration(5),
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                )
+            )
+            taskRepository.save(
+                Task(
+                    provider = provider1,
+                    delay = Duration(5),
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                )
+            )
+            taskRepository.save(
+                Task(
+                    provider = provider1,
+                    delay = Duration(5),
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                )
+            )
+            taskRepository.save(
+                Task(
+                    provider = provider2,
+                    delay = Duration(5),
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                )
+            )
+            taskRepository.save(
+                Task(
+                    provider = provider3,
+                    delay = Duration(5),
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                )
+            )
         }
     }
 
