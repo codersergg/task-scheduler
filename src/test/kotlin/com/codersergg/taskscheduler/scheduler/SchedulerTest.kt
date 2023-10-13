@@ -1,9 +1,9 @@
 package com.codersergg.taskscheduler.scheduler
 
 import com.codersergg.taskscheduler.dto.DefaultProvider
-import com.codersergg.taskscheduler.dto.Duration
 import com.codersergg.taskscheduler.dto.DurationRestTask
-import com.codersergg.taskscheduler.dto.RestPathResponse
+import com.codersergg.taskscheduler.model.json.Duration
+import com.codersergg.taskscheduler.model.json.RestPathResponse
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.time.withTimeout

@@ -1,5 +1,6 @@
 package com.codersergg.taskscheduler.dto
 
+import com.codersergg.taskscheduler.model.json.*
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import java.io.Serializable
@@ -10,11 +11,12 @@ import java.time.Instant
     JsonSubTypes.Type(value = DurationRestTask::class, name = "DurationRestTask"),
     JsonSubTypes.Type(value = TimerRestTask::class, name = "TimerRestTask")
 )
-abstract class RestTask : AbstractTask(), Serializable, Task {
+abstract class RestTask : AbstractTask(), Serializable {
     abstract override val provider: AbstractProvider
     abstract override val createdAt: Instant
     abstract override val delay: AbstractDelay
     abstract override val pathResponse: PathResponse
+    abstract val type: String
 }
 
 data class DurationRestTask(
@@ -22,13 +24,13 @@ data class DurationRestTask(
     override val createdAt: Instant = Instant.now(),
     override var delay: Duration,
     override val pathResponse: RestPathResponse,
-    val type: String = "DurationRestTask"
-) : RestTask(), Serializable, Task
+    override val type: String = "DurationRestTask"
+) : RestTask(), Serializable
 
 data class TimerRestTask(
     override val provider: DefaultProvider,
     override val createdAt: Instant = Instant.now(),
     override var delay: Timer,
     override val pathResponse: RestPathResponse,
-    val type: String = "TimerRestTask"
-) : RestTask(), Serializable, Task
+    override val type: String = "TimerRestTask"
+) : RestTask(), Serializable

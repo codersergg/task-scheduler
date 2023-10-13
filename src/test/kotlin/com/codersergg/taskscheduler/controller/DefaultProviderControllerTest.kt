@@ -1,9 +1,10 @@
 package com.codersergg.taskscheduler.controller
 
-import com.codersergg.taskscheduler.dto.Duration
-import com.codersergg.taskscheduler.dto.RestPathResponse
+import com.codersergg.taskscheduler.dto.ProviderType
 import com.codersergg.taskscheduler.model.Provider
 import com.codersergg.taskscheduler.model.Task
+import com.codersergg.taskscheduler.model.json.Duration
+import com.codersergg.taskscheduler.model.json.RestPathResponse
 import com.codersergg.taskscheduler.repository.Pagination
 import com.codersergg.taskscheduler.repository.ProviderRepository
 import com.codersergg.taskscheduler.repository.RequestParameters
@@ -24,7 +25,6 @@ import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import java.net.URI
-import java.time.Instant
 
 
 @SpringBootTest
@@ -32,7 +32,7 @@ import java.time.Instant
 @Testcontainers
 @DirtiesContext
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-internal class ProviderControllerTest
+internal class DefaultProviderControllerTest
 @Autowired constructor(
     val mockMvc: MockMvc,
     val objectMapper: ObjectMapper,
@@ -61,11 +61,13 @@ internal class ProviderControllerTest
 
     init {
         if (providerRepository.findAll().isEmpty()) {
-            val provider1 = providerRepository.save(Provider("provider name 1"))
-            val provider2 = providerRepository.save(Provider("provider name 2"))
-            val provider3 = providerRepository.save(Provider("provider name 3"))
+            val provider1 =
+                providerRepository.save(Provider("provider name 1", type = ProviderType.DEFAULT_PROVIDER.string))
+            val provider2 =
+                providerRepository.save(Provider("provider name 2", type = ProviderType.DEFAULT_PROVIDER.string))
+            val provider3 =
+                providerRepository.save(Provider("provider name 3", type = ProviderType.DEFAULT_PROVIDER.string))
 
-            val createdAt = Instant.now()
             taskRepository.save(
                 Task(
                     provider = provider1,

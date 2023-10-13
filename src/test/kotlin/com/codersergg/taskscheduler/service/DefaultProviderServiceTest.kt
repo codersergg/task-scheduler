@@ -1,12 +1,13 @@
 package com.codersergg.taskscheduler.service
 
-import com.codersergg.taskscheduler.dto.Duration
-import com.codersergg.taskscheduler.dto.RestPathResponse
+import com.codersergg.taskscheduler.dto.ProviderType
 import com.codersergg.taskscheduler.dto.request.ProviderRequestToAdd
 import com.codersergg.taskscheduler.dto.response.ProviderResponse
 import com.codersergg.taskscheduler.dto.response.ProviderWithTaskResponse
 import com.codersergg.taskscheduler.model.Provider
 import com.codersergg.taskscheduler.model.Task
+import com.codersergg.taskscheduler.model.json.Duration
+import com.codersergg.taskscheduler.model.json.RestPathResponse
 import com.codersergg.taskscheduler.repository.Pagination
 import com.codersergg.taskscheduler.repository.ProviderRepository
 import com.codersergg.taskscheduler.repository.RequestParameters
@@ -33,7 +34,7 @@ import java.net.URI
 @Testcontainers
 @DirtiesContext
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class ProviderServiceTest
+class DefaultProviderServiceTest
 @Autowired constructor(
     val providerService: ProviderService,
     providerRepository: ProviderRepository,
@@ -54,9 +55,12 @@ class ProviderServiceTest
 
     init {
         if (providerRepository.findAll().isEmpty()) {
-            val provider1 = providerRepository.save(Provider("provider name 1"))
-            val provider2 = providerRepository.save(Provider("provider name 2"))
-            val provider3 = providerRepository.save(Provider("provider name 3"))
+            val provider1 =
+                providerRepository.save(Provider("provider name 1", type = ProviderType.DEFAULT_PROVIDER.string))
+            val provider2 =
+                providerRepository.save(Provider("provider name 2", type = ProviderType.DEFAULT_PROVIDER.string))
+            val provider3 =
+                providerRepository.save(Provider("provider name 3", type = ProviderType.DEFAULT_PROVIDER.string))
 
             taskRepository.save(
                 Task(
@@ -99,7 +103,7 @@ class ProviderServiceTest
     @Nested
     @DisplayName("getAllProvider()")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    inner class GetAllProvider {
+    inner class GetAllDefaultProvider {
 
         @Test
         fun `should return List of Providers`() {
@@ -213,13 +217,14 @@ class ProviderServiceTest
     @Nested
     @DisplayName("createProvider()")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    inner class CreateProvider {
+    inner class CreateDefaultProvider {
 
         @Test
         fun `should create Provider`() {
             // when
             val name = "new Provider name"
-            val provider = providerService.createProvider(ProviderRequestToAdd(name))
+            val provider =
+                providerService.createProvider(ProviderRequestToAdd(name, type = ProviderType.DEFAULT_PROVIDER.string))
 
             // then
             Assertions.assertThat(provider).isInstanceOf(ProviderResponse::class.java)

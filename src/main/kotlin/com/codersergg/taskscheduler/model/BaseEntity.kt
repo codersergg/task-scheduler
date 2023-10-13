@@ -6,11 +6,13 @@ import java.io.Serializable
 
 @MappedSuperclass
 abstract class BaseEntity<T : Serializable> {
-
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: T? = null
+
+    @Version
+    var lastUpdated: Long = 0
 
     override fun equals(other: Any?): Boolean {
         other ?: return false

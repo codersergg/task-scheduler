@@ -1,13 +1,10 @@
 package com.codersergg.taskscheduler.model
 
-import com.codersergg.taskscheduler.dto.request.ProviderRequest
 import com.codersergg.taskscheduler.dto.response.ProviderResponse
 import com.codersergg.taskscheduler.dto.response.ProviderWithTaskResponse
-import com.fasterxml.jackson.annotation.JsonManagedReference
 import jakarta.persistence.*
 import org.hibernate.annotations.NaturalId
 import java.io.Serializable
-import java.time.LocalDateTime
 
 @Entity
 @Table(name = "Provider")
@@ -16,27 +13,24 @@ class Provider(
     @Column(name = "name", nullable = false)
     @NaturalId
     var name: String,
+    @Column(name = "type", nullable = false)
+    var type: String,
     @OneToMany(mappedBy = "provider")
-    @JsonManagedReference
     var tasks: MutableList<Task> = mutableListOf(),
-    @Version
-    var lastUpdated: LocalDateTime = LocalDateTime.now()
 ) : BaseEntity<Long>(), Serializable {
-
-    constructor(id: Long, name: String, lastUpdated: LocalDateTime) : this(name, lastUpdated = lastUpdated) {
+    constructor(id: Long, name: String, type: String) : this(
+        name = name,
+        type = type
+    ) {
         super.id = id
     }
 
     fun toProviderResponse(): ProviderResponse {
-        return ProviderResponse(id!!, name)
+        return ProviderResponse(id!!, name, type)
     }
 
     fun toProviderResponseWithTask(): ProviderWithTaskResponse {
-        return ProviderWithTaskResponse(id!!, name, tasks.map { it.toTaskResponseWithDelay() })
-    }
-
-    fun toProviderRequest(): ProviderRequest {
-        return ProviderRequest(id!!, name)
+        return ProviderWithTaskResponse(id!!, name, type, tasks.map { it.toTaskResponseWithDelay() })
     }
 
     override fun equals(other: Any?): Boolean {
@@ -54,5 +48,4 @@ class Provider(
         result = 31 * result + name.hashCode()
         return result
     }
-
 }

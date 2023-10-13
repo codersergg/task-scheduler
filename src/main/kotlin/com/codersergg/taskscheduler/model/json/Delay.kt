@@ -1,4 +1,4 @@
-package com.codersergg.taskscheduler.dto
+package com.codersergg.taskscheduler.model.json
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo

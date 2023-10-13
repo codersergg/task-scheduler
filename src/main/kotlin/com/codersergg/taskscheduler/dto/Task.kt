@@ -1,5 +1,8 @@
 package com.codersergg.taskscheduler.dto
 
+import com.codersergg.taskscheduler.dto.request.Requestable
+import com.codersergg.taskscheduler.model.json.AbstractDelay
+import com.codersergg.taskscheduler.model.json.PathResponse
 import java.io.Serializable
 import java.time.Instant
 
@@ -14,4 +17,11 @@ abstract class AbstractTaskResponse : Serializable {
     abstract val createdAt: Instant
 }
 
-interface Task
+data class TaskToUpdateRequest(
+    val id: Long,
+    override var provider: DefaultProvider,
+    override var createdAt: Instant,
+    override val delay: AbstractDelay,
+    override val pathResponse: PathResponse,
+    var lastRun: Instant = Instant.now(),
+) : AbstractTask(), Serializable, Requestable

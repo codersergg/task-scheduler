@@ -19,7 +19,7 @@ class SchedulerController(private val taskService: TaskService) {
     fun startTask(@RequestBody restTask: RestTask): Boolean {
         taskService.createTask(
             Task(
-                Provider(name = restTask.provider.name),
+                Provider(name = restTask.provider.name, type = restTask.provider.type),
                 createdAt = restTask.createdAt,
                 delay = restTask.delay,
                 pathResponse = restTask.pathResponse

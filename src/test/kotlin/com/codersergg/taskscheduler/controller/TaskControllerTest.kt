@@ -1,12 +1,10 @@
 package com.codersergg.taskscheduler.controller
 
-import com.codersergg.taskscheduler.dto.Duration
-import com.codersergg.taskscheduler.dto.RestPathResponse
-import com.codersergg.taskscheduler.dto.request.ProviderRequest
-import com.codersergg.taskscheduler.dto.request.TaskToCreateRequest
-import com.codersergg.taskscheduler.dto.request.TaskToUpdateRequest
+import com.codersergg.taskscheduler.dto.*
 import com.codersergg.taskscheduler.model.Provider
 import com.codersergg.taskscheduler.model.Task
+import com.codersergg.taskscheduler.model.json.Duration
+import com.codersergg.taskscheduler.model.json.RestPathResponse
 import com.codersergg.taskscheduler.repository.ProviderRepository
 import com.codersergg.taskscheduler.repository.TaskRepository
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -24,6 +22,7 @@ import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import java.net.URI
+import java.time.Instant
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -58,9 +57,12 @@ internal class TaskControllerTest
 
     init {
         if (providerRepository.findAll().isEmpty()) {
-            val provider1 = providerRepository.save(Provider("provider name 1"))
-            val provider2 = providerRepository.save(Provider("provider name 2"))
-            val provider3 = providerRepository.save(Provider("provider name 3"))
+            val provider1 =
+                providerRepository.save(Provider("provider name 1", type = ProviderType.DEFAULT_PROVIDER.string))
+            val provider2 =
+                providerRepository.save(Provider("provider name 2", type = ProviderType.DEFAULT_PROVIDER.string))
+            val provider3 =
+                providerRepository.save(Provider("provider name 3", type = ProviderType.DEFAULT_PROVIDER.string))
 
             taskRepository.save(
                 Task(
@@ -159,9 +161,11 @@ internal class TaskControllerTest
         @Test
         fun `should add Task`() {
             // given
-            val owner3 = ProviderRequest(3, "provider name 3")
-            val task = TaskToCreateRequest(
-                owner3,
+            val name = "provider name 3"
+            val defaultProvider3 = DefaultProvider(name = name)
+            val task = DurationRestTask(
+                defaultProvider3,
+                createdAt = Instant.now(),
                 delay = Duration(5000),
                 pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
             )
@@ -192,13 +196,14 @@ internal class TaskControllerTest
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     inner class PutTask {
         @Test
-        fun `should update Task`() {
+        fun `should not be updated`() {
             // given
             val taskId: Long = 1
-            val provider = ProviderRequest(100, "task name will not be updated")
+            val defaultProvider = DefaultProvider("provider name 3")
             val task = TaskToUpdateRequest(
                 taskId,
-                provider,
+                defaultProvider,
+                createdAt = Instant.now(),
                 delay = Duration(5000),
                 pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
             )
@@ -238,7 +243,7 @@ internal class TaskControllerTest
         @Test
         fun `should delete Task`() {
 
-            val provider2 = Provider("provider name 2")
+            val provider2 = Provider("provider name 2", type = ProviderType.DEFAULT_PROVIDER.string)
             val task = Task(
                 provider2,
                 delay = Duration(5),

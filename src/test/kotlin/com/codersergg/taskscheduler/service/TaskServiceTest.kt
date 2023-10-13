@@ -1,7 +1,8 @@
 package com.codersergg.taskscheduler.service
 
-import com.codersergg.taskscheduler.dto.Duration
-import com.codersergg.taskscheduler.dto.RestPathResponse
+import com.codersergg.taskscheduler.model.json.Duration
+import com.codersergg.taskscheduler.dto.ProviderType
+import com.codersergg.taskscheduler.model.json.RestPathResponse
 import com.codersergg.taskscheduler.dto.response.TaskResponseWithDelay
 import com.codersergg.taskscheduler.model.Provider
 import com.codersergg.taskscheduler.model.Task
@@ -53,9 +54,9 @@ internal class TaskServiceTest
 
     init {
         if (providerRepository.findAll().isEmpty()) {
-            val provider1 = providerRepository.save(Provider("provider name 1"))
-            val provider2 = providerRepository.save(Provider("provider name 2"))
-            val provider3 = providerRepository.save(Provider("provider name 3"))
+            val provider1 = providerRepository.save(Provider("provider name 1", type = ProviderType.DEFAULT_PROVIDER.string))
+            val provider2 = providerRepository.save(Provider("provider name 2", type = ProviderType.DEFAULT_PROVIDER.string))
+            val provider3 = providerRepository.save(Provider("provider name 3", type = ProviderType.DEFAULT_PROVIDER.string))
 
             taskRepository.save(
                 Task(
@@ -137,7 +138,7 @@ internal class TaskServiceTest
         fun `should create new Provider and Task, return TaskResponse`() = runTest {
             // given
             val name = "New Provider"
-            val provider = Provider(name)
+            val provider = Provider(name, type = ProviderType.DEFAULT_PROVIDER.string)
             val task = Task(
                 provider,
                 delay = Duration(5000),
@@ -160,7 +161,7 @@ internal class TaskServiceTest
         fun `should create new Task and use old Provider, return TaskResponse`() = runTest {
             // given
             val name = "provider name 3"
-            val provider = Provider(name)
+            val provider = Provider(name, type = ProviderType.DEFAULT_PROVIDER.string)
             val task = Task(
                 provider,
                 delay = Duration(5000),

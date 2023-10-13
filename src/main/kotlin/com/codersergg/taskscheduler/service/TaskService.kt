@@ -1,6 +1,6 @@
 package com.codersergg.taskscheduler.service
 
-import com.codersergg.taskscheduler.dto.request.TaskToUpdateRequest
+import com.codersergg.taskscheduler.dto.TaskToUpdateRequest
 import com.codersergg.taskscheduler.dto.response.TaskResponseWithDelay
 import com.codersergg.taskscheduler.model.Provider
 import com.codersergg.taskscheduler.model.Task
@@ -35,7 +35,7 @@ class TaskService(
             session.createSelectionQuery("select p from Provider p where p.name like (:name)", Provider::class.java)
                 .setParameter("name", name).singleResultOrNull
         if (provider == null) {
-            provider = Provider(name = task.provider.name)
+            provider = Provider(name = task.provider.name, type = task.provider.type)
             session.persist(provider)
         }
         task.provider = provider
@@ -44,7 +44,15 @@ class TaskService(
     }
 
     fun updateTask(task: TaskToUpdateRequest): Int {
-        return taskRepository.update(task.id, task.lastRun)
+        val findByName = providerRepository.findByName(task.provider.name)
+        val taskOptional = taskRepository.findById(task.id)
+        if (!taskOptional.isPresent) throw IllegalArgumentException()
+
+        if (findByName.isPresent && task.provider.name == taskOptional.get().provider.name) {
+            println("task.provider.name: ${task.provider.name}")
+            println("findByName.get().name: ${findByName.get().name}")
+            return taskRepository.update(task.id, task.lastRun)
+        } else throw IllegalArgumentException()
     }
 
     fun deleteTaskById(id: Long) {

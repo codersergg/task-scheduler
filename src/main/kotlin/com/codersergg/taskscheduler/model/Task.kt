@@ -1,17 +1,14 @@
 package com.codersergg.taskscheduler.model
 
-import com.codersergg.taskscheduler.dto.AbstractDelay
-import com.codersergg.taskscheduler.dto.PathResponse
-import com.codersergg.taskscheduler.dto.request.TaskToUpdateRequest
 import com.codersergg.taskscheduler.dto.response.TaskResponseWithDelay
-import com.fasterxml.jackson.annotation.JsonBackReference
+import com.codersergg.taskscheduler.model.json.AbstractDelay
+import com.codersergg.taskscheduler.model.json.PathResponse
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import jakarta.persistence.*
 import jakarta.validation.constraints.NotNull
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.type.SqlTypes
 import java.time.Instant
-import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
@@ -21,7 +18,6 @@ class Task(
     @NotNull
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "providerId")
-    @JsonBackReference
     var provider: Provider,
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
     @Column(name = "delay", nullable = false)
@@ -35,8 +31,6 @@ class Task(
     var createdAt: Instant = Instant.now(),
     @Column(name = "lastRun", nullable = false)
     var lastRun: Instant = Instant.EPOCH,
-    @Version
-    var lastUpdated: LocalDateTime = LocalDateTime.now()
 ) : BaseEntity<Long>() {
 
     fun toTaskResponseWithDelay(): TaskResponseWithDelay {
@@ -46,17 +40,6 @@ class Task(
             delay = delay,
             pathResponse = pathResponse,
             lastRun = convertInstantToString(lastRun),
-            createdAt = createdAt,
-        )
-    }
-
-    fun toTaskRequestWithDelay(): TaskToUpdateRequest {
-        return TaskToUpdateRequest(
-            id = id!!,
-            provider = provider.toProviderResponse(),
-            delay = delay,
-            pathResponse = pathResponse,
-            lastRun = lastRun,
             createdAt = createdAt,
         )
     }

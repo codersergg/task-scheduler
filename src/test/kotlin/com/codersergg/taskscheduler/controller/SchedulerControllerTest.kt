@@ -1,7 +1,13 @@
 package com.codersergg.taskscheduler.controller
 
-import com.codersergg.taskscheduler.dto.*
+import com.codersergg.taskscheduler.dto.DefaultProvider
+import com.codersergg.taskscheduler.dto.DurationRestTask
+import com.codersergg.taskscheduler.dto.ProviderType
+import com.codersergg.taskscheduler.dto.TimerRestTask
 import com.codersergg.taskscheduler.model.Provider
+import com.codersergg.taskscheduler.model.json.Duration
+import com.codersergg.taskscheduler.model.json.RestPathResponse
+import com.codersergg.taskscheduler.model.json.Timer
 import com.codersergg.taskscheduler.repository.ProviderRepository
 import com.codersergg.taskscheduler.repository.TaskRepository
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -55,7 +61,7 @@ internal class SchedulerControllerTest
 
     init {
         if (providerRepository.findAll().isEmpty()) {
-            providerRepository.save(Provider("provider name Init"))
+            providerRepository.save(Provider("provider name Init", type = ProviderType.DEFAULT_PROVIDER.string))
         }
     }
 
@@ -109,9 +115,9 @@ internal class SchedulerControllerTest
         fun `should save DurationRestTask and run Task`() {
             // given
             val name = "provider name Init"
-            val provider = DefaultProvider(name)
+            val defaultProvider = DefaultProvider(name)
             val task = DurationRestTask(
-                provider,
+                defaultProvider,
                 delay = Duration(15000),
                 pathResponse = RestPathResponse(URI("http://localhost:8080/api/test-scheduler"))
             )
