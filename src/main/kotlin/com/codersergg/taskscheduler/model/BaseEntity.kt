@@ -3,6 +3,7 @@ package com.codersergg.taskscheduler.model
 import jakarta.persistence.*
 import org.springframework.data.util.ProxyUtils
 import java.io.Serializable
+import java.time.Instant
 
 @MappedSuperclass
 abstract class BaseEntity<T : Serializable> {
@@ -12,7 +13,7 @@ abstract class BaseEntity<T : Serializable> {
     var id: T? = null
 
     @Version
-    var lastUpdated: Long = 0
+    var lastUpdated: Instant = Instant.now()
 
     override fun equals(other: Any?): Boolean {
         other ?: return false

@@ -1,5 +1,7 @@
 package com.codersergg.taskscheduler.dto
 
+import com.codersergg.taskscheduler.model.Provider
+import com.codersergg.taskscheduler.model.Task
 import com.codersergg.taskscheduler.model.json.*
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
@@ -17,6 +19,14 @@ abstract class RestTask : AbstractTask(), Serializable {
     abstract override val delay: AbstractDelay
     abstract override val pathResponse: PathResponse
     abstract val type: String
+
+    fun toTask() = Task(
+        Provider(name = this.provider.name, type = this.provider.type),
+        createdAt = this.createdAt,
+        delay = this.delay,
+        pathResponse = this.pathResponse
+    )
+
 }
 
 data class DurationRestTask(

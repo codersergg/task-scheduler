@@ -5,11 +5,13 @@ import com.codersergg.taskscheduler.repository.TaskRepository
 import org.springframework.boot.ApplicationRunner
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Profile
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 
 @org.springframework.context.annotation.Configuration
 @EnableJpaRepositories("com.codersergg.taskscheduler.repository")
 @EntityScan("com.codersergg.taskscheduler.model")
+@Profile("!test")
 class Configuration {
     @Bean
     fun databaseInitializer(

@@ -52,6 +52,6 @@ class TaskSchedulerApplicationTests {
     @DirtiesContext
     fun `when database is connected then it should be Postgres version 16`() {
         val actualDatabaseVersion = jdbcTemplate.queryForObject("SELECT version()", String::class.java)
-        actualDatabaseVersion shouldContain "PostgreSQL 16.0"
+        actualDatabaseVersion shouldContain "PostgreSQL 16"
     }
 }
