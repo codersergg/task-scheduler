@@ -184,7 +184,7 @@ internal class TaskControllerTest
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                     }
-                    jsonPath("$.id") { value(6) }
+                    jsonPath("$.id") { value(7) }
                     jsonPath("$.provider.name") { value("provider name 3") }
                     jsonPath("$.lastRun") { isNotEmpty() }
                 }
