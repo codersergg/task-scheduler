@@ -4,11 +4,13 @@ import com.codersergg.taskscheduler.configuration.ApplicationProperties
 import com.codersergg.taskscheduler.repository.AppInitializerRepository
 import com.codersergg.taskscheduler.repository.TaskRepository
 import com.codersergg.taskscheduler.scheduler.Scheduler
+import com.codersergg.taskscheduler.util.SchedulerHttpClient
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
+import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Service
 
 @Service
@@ -23,10 +25,16 @@ class AppInitializerService(
     suspend fun starting() {
         val isRegister = register()
         logger.info { "isRegister: $isRegister" }
-        val allTasks = taskRepository.getAllTasksNotRun()
         withContext(Dispatchers.IO) {
+            val allTasks = taskRepository.getAllTasksNotRun()
             allTasks.map {
-                scheduler.run({ println("Task saved Run") }, it.toAbstractTask())
+                scheduler.run({
+                    SchedulerHttpClient.sendRequest(
+                        it.pathResponse.path,
+                        HttpMethod.POST,
+                        body = it.toAbstractTask()
+                    )
+                }, it.toAbstractTask())
             }
         }
 
