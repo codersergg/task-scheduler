@@ -1,6 +1,7 @@
-package com.codersergg.taskscheduler.service
+package com.codersergg.taskscheduler.repository
 
 import com.codersergg.taskscheduler.dto.ProviderType
+import com.codersergg.taskscheduler.dto.TaskType
 import com.codersergg.taskscheduler.dto.request.ProviderRequestToAdd
 import com.codersergg.taskscheduler.dto.response.ProviderResponse
 import com.codersergg.taskscheduler.dto.response.ProviderWithTaskResponse
@@ -8,10 +9,6 @@ import com.codersergg.taskscheduler.model.Provider
 import com.codersergg.taskscheduler.model.Task
 import com.codersergg.taskscheduler.model.json.Duration
 import com.codersergg.taskscheduler.model.json.RestPathResponse
-import com.codersergg.taskscheduler.repository.Pagination
-import com.codersergg.taskscheduler.repository.ProviderRepository
-import com.codersergg.taskscheduler.repository.RequestParameters
-import com.codersergg.taskscheduler.repository.TaskRepository
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -34,11 +31,11 @@ import java.net.URI
 @Testcontainers
 @DirtiesContext
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class DefaultProviderServiceTest
+class ProviderRepositoryJpaTest
 @Autowired constructor(
-    val providerService: ProviderService,
-    providerRepository: ProviderRepository,
-    taskRepository: TaskRepository
+    val providerRepository: ProviderRepository,
+    providerRepositoryJpa: ProviderRepositoryJpa,
+    taskRepositoryJpa: TaskRepositoryJpa
 ) {
     companion object {
         @Container
@@ -54,47 +51,52 @@ class DefaultProviderServiceTest
     }
 
     init {
-        if (providerRepository.findAll().isEmpty()) {
+        if (providerRepositoryJpa.findAll().isEmpty()) {
             val provider1 =
-                providerRepository.save(Provider("provider name 1", type = ProviderType.DEFAULT_PROVIDER.string))
+                providerRepositoryJpa.save(Provider("provider name 1", type = ProviderType.DEFAULT_PROVIDER.string))
             val provider2 =
-                providerRepository.save(Provider("provider name 2", type = ProviderType.DEFAULT_PROVIDER.string))
+                providerRepositoryJpa.save(Provider("provider name 2", type = ProviderType.DEFAULT_PROVIDER.string))
             val provider3 =
-                providerRepository.save(Provider("provider name 3", type = ProviderType.DEFAULT_PROVIDER.string))
+                providerRepositoryJpa.save(Provider("provider name 3", type = ProviderType.DEFAULT_PROVIDER.string))
 
-            taskRepository.save(
+            taskRepositoryJpa.save(
                 Task(
                     provider = provider1,
                     delay = Duration(5),
-                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")),
+                    type = TaskType.DURATION_REST_TASK.string
                 )
             )
-            taskRepository.save(
+            taskRepositoryJpa.save(
                 Task(
                     provider = provider1,
                     delay = Duration(5),
-                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")),
+                    type = TaskType.DURATION_REST_TASK.string
                 )
             )
-            taskRepository.save(
+            taskRepositoryJpa.save(
                 Task(
                     provider = provider1,
                     delay = Duration(5),
-                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")),
+                    type = TaskType.DURATION_REST_TASK.string
                 )
             )
-            taskRepository.save(
+            taskRepositoryJpa.save(
                 Task(
                     provider = provider2,
                     delay = Duration(5),
-                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")),
+                    type = TaskType.DURATION_REST_TASK.string
                 )
             )
-            taskRepository.save(
+            taskRepositoryJpa.save(
                 Task(
                     provider = provider3,
                     delay = Duration(5),
-                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")),
+                    type = TaskType.DURATION_REST_TASK.string
                 )
             )
         }
@@ -108,7 +110,7 @@ class DefaultProviderServiceTest
         @Test
         fun `should return List of Providers`() {
             // when
-            val providers = providerService.getAllProviders(RequestParameters())
+            val providers = providerRepository.getAllProviders(RequestParameters())
 
             // then
             Assertions.assertThat(providers.size).isEqualTo(3)
@@ -117,7 +119,7 @@ class DefaultProviderServiceTest
         @Test
         fun `should return List of ProviderWithTask`() {
             // when
-            val providers = providerService.getAllProvidersWithTask(RequestParameters())
+            val providers = providerRepository.getAllProvidersWithTask(RequestParameters())
 
             // then
             Assertions.assertThat(providers.size).isEqualTo(3)
@@ -126,7 +128,7 @@ class DefaultProviderServiceTest
         @Test
         fun `should return List of Providers containing 2 elements from the first`() {
             // when
-            val providers = providerService.getAllProviders(
+            val providers = providerRepository.getAllProviders(
                 RequestParameters(
                     pagination = Pagination(0, 2)
                 )
@@ -143,7 +145,7 @@ class DefaultProviderServiceTest
         @Test
         fun `should return List of Providers containing 2 elements from the second`() {
             // when
-            val providers = providerService.getAllProviders(
+            val providers = providerRepository.getAllProviders(
                 RequestParameters(
                     pagination = Pagination(0, 2)
                 )
@@ -160,7 +162,7 @@ class DefaultProviderServiceTest
         @Test
         fun `should return List of ProvidersWithTask containing 1 elements from the first`() {
             // when
-            val providers = providerService.getAllProvidersWithTask(
+            val providers = providerRepository.getAllProvidersWithTask(
                 RequestParameters(
                     pagination = Pagination(1, 2)
                 )
@@ -175,7 +177,7 @@ class DefaultProviderServiceTest
         @Test
         fun `should return List of ProvidersWithTask containing 1 elements from the second`() {
             // when
-            val providers = providerService.getAllProvidersWithTask(
+            val providers = providerRepository.getAllProvidersWithTask(
                 RequestParameters(
                     pagination = Pagination(1, 2)
                 )
@@ -196,7 +198,7 @@ class DefaultProviderServiceTest
         @Test
         fun `should return Provider`() {
             // when
-            val provider = providerService.getProvider(1)
+            val provider = providerRepository.getProvider(1)
 
             // then
             Assertions.assertThat(provider).isInstanceOf(ProviderResponse::class.java)
@@ -206,7 +208,7 @@ class DefaultProviderServiceTest
         @Test
         fun `should return ProvidersWithTask`() {
             // when
-            val provider = providerService.getProviderWithTasks(2)
+            val provider = providerRepository.getProviderWithTasks(2)
 
             // then
             Assertions.assertThat(provider).isInstanceOf(ProviderWithTaskResponse::class.java)
@@ -224,14 +226,14 @@ class DefaultProviderServiceTest
             // when
             val name = "new Provider name"
             val provider =
-                providerService.createProvider(ProviderRequestToAdd(name, type = ProviderType.DEFAULT_PROVIDER.string))
+                providerRepository.createProvider(ProviderRequestToAdd(name, type = ProviderType.DEFAULT_PROVIDER.string))
 
             // then
             Assertions.assertThat(provider).isInstanceOf(ProviderResponse::class.java)
             Assertions.assertThat(provider.id).isEqualTo(4)
             Assertions.assertThat(provider.name).isEqualTo(name)
 
-            providerService.delete(provider.id)
+            providerRepository.delete(provider.id)
         }
     }
 }

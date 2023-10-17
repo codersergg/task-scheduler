@@ -1,13 +1,11 @@
-package com.codersergg.taskscheduler.service
+package com.codersergg.taskscheduler.repository
 
-import com.codersergg.taskscheduler.model.json.Duration
 import com.codersergg.taskscheduler.dto.ProviderType
-import com.codersergg.taskscheduler.model.json.RestPathResponse
-import com.codersergg.taskscheduler.dto.response.TaskResponseWithDelay
+import com.codersergg.taskscheduler.dto.TaskType
 import com.codersergg.taskscheduler.model.Provider
 import com.codersergg.taskscheduler.model.Task
-import com.codersergg.taskscheduler.repository.ProviderRepository
-import com.codersergg.taskscheduler.repository.TaskRepository
+import com.codersergg.taskscheduler.model.json.Duration
+import com.codersergg.taskscheduler.model.json.RestPathResponse
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.*
@@ -26,11 +24,11 @@ import java.net.URI
 @Testcontainers
 @DirtiesContext
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-internal class TaskServiceTest
+internal class TaskRepositoryTest
 @Autowired constructor(
-    val taskService: TaskService,
-    providerRepository: ProviderRepository,
-    taskRepository: TaskRepository
+    val taskRepository: TaskRepository,
+    providerRepositoryJpa: ProviderRepositoryJpa,
+    taskRepositoryJpa: TaskRepositoryJpa
 ) {
 
     companion object {
@@ -53,44 +51,52 @@ internal class TaskServiceTest
     }
 
     init {
-        if (providerRepository.findAll().isEmpty()) {
-            val provider1 = providerRepository.save(Provider("provider name 1", type = ProviderType.DEFAULT_PROVIDER.string))
-            val provider2 = providerRepository.save(Provider("provider name 2", type = ProviderType.DEFAULT_PROVIDER.string))
-            val provider3 = providerRepository.save(Provider("provider name 3", type = ProviderType.DEFAULT_PROVIDER.string))
+        if (providerRepositoryJpa.findAll().isEmpty()) {
+            val provider1 =
+                providerRepositoryJpa.save(Provider("provider name 1", type = ProviderType.DEFAULT_PROVIDER.string))
+            val provider2 =
+                providerRepositoryJpa.save(Provider("provider name 2", type = ProviderType.DEFAULT_PROVIDER.string))
+            val provider3 =
+                providerRepositoryJpa.save(Provider("provider name 3", type = ProviderType.DEFAULT_PROVIDER.string))
 
-            taskRepository.save(
+            taskRepositoryJpa.save(
                 Task(
                     provider = provider1,
                     delay = Duration(5),
-                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")),
+                    type = TaskType.DURATION_REST_TASK.string
                 )
             )
-            taskRepository.save(
+            taskRepositoryJpa.save(
                 Task(
                     provider = provider1,
                     delay = Duration(5),
-                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")),
+                    type = TaskType.DURATION_REST_TASK.string
                 )
             )
-            taskRepository.save(
+            taskRepositoryJpa.save(
                 Task(
                     provider = provider1,
                     delay = Duration(5),
-                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")),
+                    type = TaskType.DURATION_REST_TASK.string
                 )
             )
-            taskRepository.save(
+            taskRepositoryJpa.save(
                 Task(
                     provider = provider2,
                     delay = Duration(5),
-                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")),
+                    type = TaskType.DURATION_REST_TASK.string
                 )
             )
-            taskRepository.save(
+            taskRepositoryJpa.save(
                 Task(
                     provider = provider3,
                     delay = Duration(5),
-                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")),
+                    type = TaskType.DURATION_REST_TASK.string
                 )
             )
         }
@@ -104,7 +110,7 @@ internal class TaskServiceTest
         @Test
         fun `should return TaskResponse`() {
             // when
-            val taskResponse: TaskResponseWithDelay = taskService.getTask(1)
+            val taskResponse: Task = taskRepository.getTask(1)
 
             // then
             Assertions.assertThat(taskResponse.id).isEqualTo(1)
@@ -120,7 +126,7 @@ internal class TaskServiceTest
         @Test
         fun `should return List of TaskResponse`() {
             // when
-            val findAll: List<TaskResponseWithDelay> = taskService.getAllTasks()
+            val findAll: List<Task> = taskRepository.getAllTasks()
 
             // then
             Assertions.assertThat(findAll).isNotEmpty
@@ -142,11 +148,12 @@ internal class TaskServiceTest
             val task = Task(
                 provider,
                 delay = Duration(5000),
-                pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")),
+                type = TaskType.DURATION_REST_TASK.string
             )
 
             // when
-            val taskResponse = taskService.createTask(task)
+            val taskResponse = taskRepository.createTask(task)
 
             // then
             Assertions.assertThat(taskResponse).isNotNull
@@ -165,11 +172,12 @@ internal class TaskServiceTest
             val task = Task(
                 provider,
                 delay = Duration(5000),
-                pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")),
+                type = TaskType.DURATION_REST_TASK.string
             )
 
             // when
-            val taskResponse = taskService.createTask(task)
+            val taskResponse = taskRepository.createTask(task)
 
             // then
             Assertions.assertThat(taskResponse).isNotNull

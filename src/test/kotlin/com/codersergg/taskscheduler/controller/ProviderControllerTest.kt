@@ -1,14 +1,15 @@
 package com.codersergg.taskscheduler.controller
 
 import com.codersergg.taskscheduler.dto.ProviderType
+import com.codersergg.taskscheduler.dto.TaskType
 import com.codersergg.taskscheduler.model.Provider
 import com.codersergg.taskscheduler.model.Task
 import com.codersergg.taskscheduler.model.json.Duration
 import com.codersergg.taskscheduler.model.json.RestPathResponse
 import com.codersergg.taskscheduler.repository.Pagination
-import com.codersergg.taskscheduler.repository.ProviderRepository
+import com.codersergg.taskscheduler.repository.ProviderRepositoryJpa
 import com.codersergg.taskscheduler.repository.RequestParameters
-import com.codersergg.taskscheduler.repository.TaskRepository
+import com.codersergg.taskscheduler.repository.TaskRepositoryJpa
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -32,12 +33,12 @@ import java.net.URI
 @Testcontainers
 @DirtiesContext
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-internal class DefaultProviderControllerTest
+internal class ProviderControllerTest
 @Autowired constructor(
     val mockMvc: MockMvc,
     val objectMapper: ObjectMapper,
-    providerRepository: ProviderRepository,
-    taskRepository: TaskRepository
+    providerRepositoryJpa: ProviderRepositoryJpa,
+    taskRepositoryJpa: TaskRepositoryJpa
 ) {
 
     companion object {
@@ -60,47 +61,52 @@ internal class DefaultProviderControllerTest
     }
 
     init {
-        if (providerRepository.findAll().isEmpty()) {
+        if (providerRepositoryJpa.findAll().isEmpty()) {
             val provider1 =
-                providerRepository.save(Provider("provider name 1", type = ProviderType.DEFAULT_PROVIDER.string))
+                providerRepositoryJpa.save(Provider("provider name 1", type = ProviderType.DEFAULT_PROVIDER.string))
             val provider2 =
-                providerRepository.save(Provider("provider name 2", type = ProviderType.DEFAULT_PROVIDER.string))
+                providerRepositoryJpa.save(Provider("provider name 2", type = ProviderType.DEFAULT_PROVIDER.string))
             val provider3 =
-                providerRepository.save(Provider("provider name 3", type = ProviderType.DEFAULT_PROVIDER.string))
+                providerRepositoryJpa.save(Provider("provider name 3", type = ProviderType.DEFAULT_PROVIDER.string))
 
-            taskRepository.save(
+            taskRepositoryJpa.save(
                 Task(
                     provider = provider1,
                     delay = Duration(5),
-                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")),
+                    type = TaskType.DURATION_REST_TASK.string
                 )
             )
-            taskRepository.save(
+            taskRepositoryJpa.save(
                 Task(
                     provider = provider1,
                     delay = Duration(5),
-                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")),
+                    type = TaskType.DURATION_REST_TASK.string
                 )
             )
-            taskRepository.save(
+            taskRepositoryJpa.save(
                 Task(
                     provider = provider1,
                     delay = Duration(5),
-                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")),
+                    type = TaskType.DURATION_REST_TASK.string
                 )
             )
-            taskRepository.save(
+            taskRepositoryJpa.save(
                 Task(
                     provider = provider2,
                     delay = Duration(5),
-                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")),
+                    type = TaskType.DURATION_REST_TASK.string
                 )
             )
-            taskRepository.save(
+            taskRepositoryJpa.save(
                 Task(
                     provider = provider3,
                     delay = Duration(5),
-                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test"))
+                    pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")),
+                    type = TaskType.DURATION_REST_TASK.string
                 )
             )
         }

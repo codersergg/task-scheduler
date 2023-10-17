@@ -4,29 +4,37 @@ import com.codersergg.taskscheduler.dto.AbstractTask
 import com.codersergg.taskscheduler.dto.DurationRestTask
 import com.codersergg.taskscheduler.dto.RestTask
 import com.codersergg.taskscheduler.dto.TimerRestTask
+import com.codersergg.taskscheduler.repository.TaskRepository
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.*
 import org.joda.time.DateTimeZone
+import org.springframework.stereotype.Component
 import java.time.Duration
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
-object Scheduler {
+@Component
+class Scheduler(private val taskRepository: TaskRepository) {
 
     private val logger = KotlinLogging.logger {}
-    fun run(block: suspend () -> Unit, task: RestTask) {
+
+    suspend fun run(block: suspend () -> Unit, task: AbstractTask) {
         logger.info { "Start run task: $task" }
         when (task) {
-            is DurationRestTask -> runWithDuration(task, block)
-            is TimerRestTask -> runWithTimer(task, block)
-            else -> {
-                throw ClassCastException()
+            is RestTask -> {
+                when (task) {
+                    is DurationRestTask -> runWithDuration(task, block)
+                    is TimerRestTask -> runWithTimer(task, block)
+                    else -> {
+                        throw ClassCastException()
+                    }
+                }
             }
         }
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    private fun runWithTimer(task: TimerRestTask, block: suspend () -> Unit) {
+    private suspend fun runWithTimer(task: TimerRestTask, block: suspend () -> Unit) {
         GlobalScope.launch {
             val zoneId = DateTimeZone.forOffsetHours(task.delay.zoneId).toTimeZone().toZoneId()
             val delay = Duration.of(task.delay.hours, ChronoUnit.HOURS).plusMinutes(task.delay.minutes)
@@ -52,7 +60,7 @@ object Scheduler {
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    private fun runWithDuration(task: DurationRestTask, block: suspend () -> Unit) {
+    private suspend fun runWithDuration(task: DurationRestTask, block: suspend () -> Unit) {
         GlobalScope.launch {
             while (isActive) {
                 delay(task.delay.value)
@@ -61,9 +69,13 @@ object Scheduler {
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private suspend fun runTask(task: AbstractTask, block: suspend () -> Unit) {
         logger.info { "Start new run task cycle: $task" }
         block()
+        GlobalScope.launch {
+            taskRepository.updateById(task.id!!)
+        }
         logger.info { "End success new run task cycle: $task" }
     }
 }

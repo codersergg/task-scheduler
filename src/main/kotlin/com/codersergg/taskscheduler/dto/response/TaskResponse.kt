@@ -7,7 +7,7 @@ import java.io.Serializable
 import java.time.Instant
 
 data class TaskResponseWithDelay(
-    val id: Long,
+    override var id: Long?,
     override val provider: ProviderResponse,
     override val createdAt: Instant,
     override val delay: AbstractDelay,

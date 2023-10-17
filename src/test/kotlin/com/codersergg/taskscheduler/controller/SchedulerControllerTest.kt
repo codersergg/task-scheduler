@@ -8,8 +8,8 @@ import com.codersergg.taskscheduler.model.Provider
 import com.codersergg.taskscheduler.model.json.Duration
 import com.codersergg.taskscheduler.model.json.RestPathResponse
 import com.codersergg.taskscheduler.model.json.Timer
-import com.codersergg.taskscheduler.repository.ProviderRepository
-import com.codersergg.taskscheduler.repository.TaskRepository
+import com.codersergg.taskscheduler.repository.ProviderRepositoryJpa
+import com.codersergg.taskscheduler.repository.TaskRepositoryJpa
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.*
@@ -37,8 +37,8 @@ internal class SchedulerControllerTest
 @Autowired constructor(
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
-    providerRepository: ProviderRepository,
-    private val taskRepository: TaskRepository
+    providerRepositoryJpa: ProviderRepositoryJpa,
+    private val taskRepositoryJpa: TaskRepositoryJpa
 ) {
     companion object {
         @Container
@@ -60,8 +60,8 @@ internal class SchedulerControllerTest
     }
 
     init {
-        if (providerRepository.findAll().isEmpty()) {
-            providerRepository.save(Provider("provider name Init", type = ProviderType.DEFAULT_PROVIDER.string))
+        if (providerRepositoryJpa.findAll().isEmpty()) {
+            providerRepositoryJpa.save(Provider("provider name Init", type = ProviderType.DEFAULT_PROVIDER.string))
         }
     }
 
@@ -77,7 +77,7 @@ internal class SchedulerControllerTest
             val name = "provider new name"
             val owner3 = DefaultProvider(name)
             val task = TimerRestTask(
-                owner3,
+                provider = owner3,
                 delay = Timer(
                     value = 1,
                     zoneId = 2,
@@ -103,12 +103,12 @@ internal class SchedulerControllerTest
                     }
                     jsonPath("$") { value(true) }
                 }
-            val findById = taskRepository.findById(1)
+            val findById = taskRepositoryJpa.findById(1)
             assertThat(findById.isPresent).isTrue()
             assertThat(findById.get().provider.name).isEqualTo(name)
             assertThat(findById.get().delay.value).isEqualTo(1L)
             assertThat(findById.get().pathResponse).isEqualTo(RestPathResponse(URI("http://localhost:8080/api/test-scheduler-timer")))
-            taskRepository.deleteById(findById.get().id!!)
+            taskRepositoryJpa.deleteById(findById.get().id!!)
         }
 
         @Test
@@ -117,7 +117,7 @@ internal class SchedulerControllerTest
             val name = "provider name Init"
             val defaultProvider = DefaultProvider(name)
             val task = DurationRestTask(
-                defaultProvider,
+                provider = defaultProvider,
                 delay = Duration(15000),
                 pathResponse = RestPathResponse(URI("http://localhost:8080/api/test-scheduler"))
             )
@@ -138,12 +138,12 @@ internal class SchedulerControllerTest
                     }
                     jsonPath("$") { value(true) }
                 }
-            val findById = taskRepository.findById(2)
+            val findById = taskRepositoryJpa.findById(2)
             assertThat(findById.isPresent).isTrue()
             assertThat(findById.get().provider.name).isEqualTo(name)
             assertThat(findById.get().delay.value).isEqualTo(15000L)
             assertThat(findById.get().pathResponse).isEqualTo(RestPathResponse(URI("http://localhost:8080/api/test-scheduler")))
-            taskRepository.deleteById(findById.get().id!!)
+            taskRepositoryJpa.deleteById(findById.get().id!!)
         }
     }
 }

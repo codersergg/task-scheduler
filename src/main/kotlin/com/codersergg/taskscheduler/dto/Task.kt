@@ -7,6 +7,7 @@ import java.io.Serializable
 import java.time.Instant
 
 abstract class AbstractTask : Serializable {
+    abstract var id: Long?
     abstract val provider: AbstractProvider
     abstract val createdAt: Instant
     abstract val delay: AbstractDelay
@@ -18,7 +19,7 @@ abstract class AbstractTaskResponse : Serializable {
 }
 
 data class TaskToUpdateRequest(
-    val id: Long,
+    override var id: Long?,
     override var provider: DefaultProvider,
     override var createdAt: Instant,
     override val delay: AbstractDelay,

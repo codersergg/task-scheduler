@@ -24,23 +24,30 @@ abstract class RestTask : AbstractTask(), Serializable {
         Provider(name = this.provider.name, type = this.provider.type),
         createdAt = this.createdAt,
         delay = this.delay,
-        pathResponse = this.pathResponse
+        pathResponse = this.pathResponse,
+        type = this.type
     )
-
 }
 
 data class DurationRestTask(
+    override var id: Long? = null,
     override val provider: DefaultProvider,
     override val createdAt: Instant = Instant.now(),
     override var delay: Duration,
     override val pathResponse: RestPathResponse,
-    override val type: String = "DurationRestTask"
+    override val type: String = TaskType.DURATION_REST_TASK.string,
 ) : RestTask(), Serializable
 
 data class TimerRestTask(
+    override var id: Long? = null,
     override val provider: DefaultProvider,
     override val createdAt: Instant = Instant.now(),
     override var delay: Timer,
     override val pathResponse: RestPathResponse,
-    override val type: String = "TimerRestTask"
+    override val type: String = TaskType.TIMER_REST_TASK.string
 ) : RestTask(), Serializable
+
+enum class TaskType(val string: String) {
+    DURATION_REST_TASK("DurationRestTask"),
+    TIMER_REST_TASK("TimerRestTask"),
+}

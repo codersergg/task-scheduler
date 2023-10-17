@@ -10,7 +10,7 @@ import java.io.Serializable
     JsonSubTypes.Type(value = Timer::class, name = "Timer")
 )
 abstract class AbstractDelay : Serializable {
-    abstract val value: Any
+    abstract val value: Long
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is AbstractDelay) return false

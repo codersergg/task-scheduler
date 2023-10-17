@@ -9,10 +9,41 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.time.withTimeout
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.*
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.annotation.DirtiesContext
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
+import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.junit.jupiter.Testcontainers
 import java.net.URI
 import java.time.Instant
 
-internal class SchedulerTest {
+@SpringBootTest
+@Testcontainers
+@DirtiesContext
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+internal class SchedulerTest(@Autowired private val scheduler: Scheduler) {
+    companion object {
+        @Container
+        private val postgreSQLContainer = PostgreSQLContainer<Nothing>("postgres:latest")
+
+        @DynamicPropertySource
+        @JvmStatic
+        fun registerDynamicProperties(registry: DynamicPropertyRegistry) {
+            registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl)
+            registry.add("spring.datasource.username", postgreSQLContainer::getUsername)
+            registry.add("spring.datasource.password", postgreSQLContainer::getPassword)
+        }
+
+        @JvmStatic
+        @AfterAll
+        fun down() {
+            postgreSQLContainer.stop()
+        }
+    }
 
     @Nested
     @DisplayName("Scheduler run simple test")
@@ -40,16 +71,18 @@ internal class SchedulerTest {
             assertTimeoutPreemptively(java.time.Duration.ofMillis(20 * timeMillis)) {
                 GlobalScope.launch {
                     withTimeout(java.time.Duration.ofMillis(5 * timeMillis)) {
-                        Scheduler.run(
+                        scheduler.run(
                             function1, DurationRestTask(
+                                1,
                                 DefaultProvider("Provider name"),
                                 Instant.now(),
                                 Duration(timeMillis),
                                 pathResponse = RestPathResponse(URI("http://localhost:8080/api/test")),
                             )
                         )
-                        Scheduler.run(
+                        scheduler.run(
                             function2, DurationRestTask(
+                                2,
                                 DefaultProvider("Other provider name"),
                                 Instant.now(),
                                 Duration(timeMillis),

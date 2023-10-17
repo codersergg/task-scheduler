@@ -8,9 +8,12 @@ import java.net.URI
 @JsonSubTypes(
     JsonSubTypes.Type(value = RestPathResponse::class, name = "RestPathResponse"),
 )
-abstract class PathResponse
+abstract class PathResponse {
+    abstract val path: URI
+    abstract val type: String
+}
 
 data class RestPathResponse(
-    val uri: URI,
-    val type: String = "RestPathResponse"
+    override val path: URI,
+    override val type: String = "RestPathResponse"
 ) : PathResponse()

@@ -7,8 +7,8 @@ import java.time.Instant
 import java.util.*
 
 @Entity
-@Table(name = "DeploymentUUID")
-class DeploymentUUID(
+@Table(name = "AppInitializer")
+class AppInitializer(
     @Column(name = "uuid", unique = true, nullable = false)
     var uuid: UUID,
     @Column(name = "lastActivity", nullable = false)
