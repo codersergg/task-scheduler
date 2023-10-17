@@ -30,6 +30,9 @@ class Scheduler(private val taskRepository: TaskRepository) {
                     }
                 }
             }
+            else -> {
+                throw ClassCastException()
+            }
         }
     }
 

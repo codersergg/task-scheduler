@@ -7,13 +7,11 @@ data class ProviderResponse(
     val id: Long,
     override var name: String,
     override val type: String,
-) : AbstractProvider(), Serializable, Responsible
+) : AbstractProvider(), Serializable
 
 data class ProviderWithTaskResponse(
     val id: Long,
     override var name: String,
     override val type: String,
     val tasks: List<TaskResponseWithDelay>,
-) : AbstractProvider(), Serializable, Responsible
-
-interface Responsible
+) : AbstractProvider(), Serializable

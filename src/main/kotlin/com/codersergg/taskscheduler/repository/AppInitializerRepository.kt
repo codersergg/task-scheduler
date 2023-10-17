@@ -62,14 +62,14 @@ class AppInitializerRepository(
     }
 
     fun getCurrent(): AppInitializer {
-        return deploymentUUID(uuid)
+        return getAppInitializer(uuid)
     }
 
     fun getByUUID(uuid: UUID): AppInitializer {
-        return deploymentUUID(uuid)
+        return getAppInitializer(uuid)
     }
 
-    private fun deploymentUUID(uuid: UUID): AppInitializer {
+    private fun getAppInitializer(uuid: UUID): AppInitializer {
         val criteriaBuilder = session.criteriaBuilder
         val criteriaQuery = criteriaBuilder.createQuery(AppInitializer::class.java)
         val root = criteriaQuery.from(AppInitializer::class.java)

@@ -1,14 +1,16 @@
 package com.codersergg.taskscheduler.repository
 
+import com.codersergg.taskscheduler.dto.DefaultProvider
 import com.codersergg.taskscheduler.dto.ProviderType
 import com.codersergg.taskscheduler.dto.TaskType
-import com.codersergg.taskscheduler.dto.request.ProviderRequestToAdd
 import com.codersergg.taskscheduler.dto.response.ProviderResponse
 import com.codersergg.taskscheduler.dto.response.ProviderWithTaskResponse
 import com.codersergg.taskscheduler.model.Provider
 import com.codersergg.taskscheduler.model.Task
 import com.codersergg.taskscheduler.model.json.Duration
 import com.codersergg.taskscheduler.model.json.RestPathResponse
+import com.codersergg.taskscheduler.util.Pagination
+import com.codersergg.taskscheduler.util.RequestParameters
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -31,7 +33,7 @@ import java.net.URI
 @Testcontainers
 @DirtiesContext
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class ProviderRepositoryJpaTest
+class ProviderRepositoryTest
 @Autowired constructor(
     val providerRepository: ProviderRepository,
     providerRepositoryJpa: ProviderRepositoryJpa,
@@ -226,7 +228,7 @@ class ProviderRepositoryJpaTest
             // when
             val name = "new Provider name"
             val provider =
-                providerRepository.createProvider(ProviderRequestToAdd(name, type = ProviderType.DEFAULT_PROVIDER.string))
+                providerRepository.createProvider(DefaultProvider(name))
 
             // then
             Assertions.assertThat(provider).isInstanceOf(ProviderResponse::class.java)

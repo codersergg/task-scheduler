@@ -12,6 +12,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Service
+import java.net.URI
 
 @Service
 class AppInitializerService(
@@ -30,7 +31,7 @@ class AppInitializerService(
             allTasks.map {
                 scheduler.run({
                     SchedulerHttpClient.sendRequest(
-                        it.pathResponse.path,
+                        it.pathResponse.path as URI,
                         HttpMethod.POST,
                         body = it.toAbstractTask()
                     )

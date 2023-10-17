@@ -9,7 +9,7 @@ import java.net.URI
     JsonSubTypes.Type(value = RestPathResponse::class, name = "RestPathResponse"),
 )
 abstract class PathResponse {
-    abstract val path: URI
+    abstract val path: Any
     abstract val type: String
 }
 

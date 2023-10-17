@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.net.URI
 
 @RestController
 @RequestMapping("api/scheduler")
@@ -28,7 +29,7 @@ class SchedulerController(
         val url = restTask.pathResponse.path
         GlobalScope.launch {
             scheduler.run(
-                { SchedulerHttpClient.sendRequest(url, HttpMethod.POST, body = restTask) },
+                { SchedulerHttpClient.sendRequest(url as URI, HttpMethod.POST, body = restTask) },
                 restTask
             )
         }

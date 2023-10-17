@@ -126,7 +126,7 @@ internal class TaskRepositoryTest
         @Test
         fun `should return List of TaskResponse`() {
             // when
-            val findAll: List<Task> = taskRepository.getAllTasks()
+            val findAll: List<Task> = taskRepository.getAllTasksNotRun()
 
             // then
             Assertions.assertThat(findAll).isNotEmpty

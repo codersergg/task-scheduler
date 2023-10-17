@@ -1,16 +1,18 @@
 package com.codersergg.taskscheduler.repository
 
-import com.codersergg.taskscheduler.dto.request.ProviderRequestToAdd
+import com.codersergg.taskscheduler.dto.DefaultProvider
 import com.codersergg.taskscheduler.dto.response.ProviderResponse
 import com.codersergg.taskscheduler.dto.response.ProviderWithTaskResponse
 import com.codersergg.taskscheduler.model.Provider
 import com.codersergg.taskscheduler.model.Provider_
 import com.codersergg.taskscheduler.model.Task_
+import com.codersergg.taskscheduler.util.RequestParameters
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import org.hibernate.Session
 import org.hibernate.query.Order
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
+import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
@@ -66,7 +68,7 @@ class ProviderRepository(@PersistenceContext private val em: EntityManager) {
     }
 
     @Transactional
-    fun createProvider(providerRequestToAdd: ProviderRequestToAdd): ProviderResponse {
+    fun createProvider(providerRequestToAdd: DefaultProvider): ProviderResponse {
         val provider = providerRequestToAdd.toProvider()
         session.persist(provider)
         return provider.toProviderResponse()
@@ -78,3 +80,6 @@ class ProviderRepository(@PersistenceContext private val em: EntityManager) {
         session.remove(provider)
     }
 }
+
+@Repository
+interface ProviderRepositoryJpa : JpaRepository<Provider, Long>

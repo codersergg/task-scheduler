@@ -13,4 +13,4 @@ data class TaskResponseWithDelay(
     override val delay: AbstractDelay,
     override val pathResponse: PathResponse,
     var lastRun: String,
-) : AbstractTask(), Serializable, Responsible
+) : AbstractTask(), Serializable

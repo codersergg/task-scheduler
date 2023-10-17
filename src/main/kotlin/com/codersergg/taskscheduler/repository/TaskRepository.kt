@@ -1,7 +1,6 @@
 package com.codersergg.taskscheduler.repository
 
 import com.codersergg.taskscheduler.configuration.ApplicationProperties
-import com.codersergg.taskscheduler.dto.TaskToUpdateRequest
 import com.codersergg.taskscheduler.dto.response.TaskResponseWithDelay
 import com.codersergg.taskscheduler.model.Provider
 import com.codersergg.taskscheduler.model.Task
@@ -11,6 +10,8 @@ import jakarta.persistence.PersistenceContext
 import jakarta.persistence.criteria.CriteriaUpdate
 import org.hibernate.Session
 import org.hibernate.query.criteria.HibernateCriteriaBuilder
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
@@ -18,15 +19,11 @@ import java.time.Instant
 @Service
 class TaskRepository(
     @PersistenceContext private val em: EntityManager,
-    private val providerRepositoryJpa: ProviderRepositoryJpa,
     private val taskRepositoryJpa: TaskRepositoryJpa,
     private val applicationProperties: ApplicationProperties
 ) {
 
     private val session: Session = em.unwrap(Session::class.java)
-    fun getAllTasks(): List<Task> {
-        return taskRepositoryJpa.findAllByOrderById()
-    }
 
     fun getAllTasksNotRun(): List<Task> {
         val criteriaBuilder = session.criteriaBuilder
@@ -78,20 +75,7 @@ class TaskRepository(
         session.clear()
         return executeUpdate
     }
-
-    fun updateTask(task: TaskToUpdateRequest): Int {
-        val findByName = providerRepositoryJpa.findByName(task.provider.name)
-        val taskOptional = taskRepositoryJpa.findById(task.id!!)
-        if (!taskOptional.isPresent) throw IllegalArgumentException()
-
-        if (findByName.isPresent && task.provider.name == taskOptional.get().provider.name) {
-            println("task.provider.name: ${task.provider.name}")
-            println("findByName.get().name: ${findByName.get().name}")
-            return taskRepositoryJpa.update(task.id!!, task.lastRun)
-        } else throw IllegalArgumentException()
-    }
-
-    fun deleteTaskById(id: Long) {
-        return taskRepositoryJpa.deleteById(id)
-    }
 }
+
+@Repository
+interface TaskRepositoryJpa : JpaRepository<Task, Long>

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("api/test")
-class SchedulerCheckRequestController {
+class SchedulerTestController {
     private val logger = KotlinLogging.logger {}
 
     @ExceptionHandler(NoSuchElementException::class)
@@ -21,7 +21,7 @@ class SchedulerCheckRequestController {
 
     @PostMapping
     fun testRout(@RequestBody task: RestTask?): Boolean {
-        logger.info { "Test sending request from Task: $task" }
+        logger.info { "Test response from Scheduler with Task: $task" }
         return true
     }
 }
