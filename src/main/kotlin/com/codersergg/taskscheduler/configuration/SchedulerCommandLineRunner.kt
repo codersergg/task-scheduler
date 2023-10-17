@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 @Component
+/** Ex.: spring_profiles_active=dev */
 @Profile("dev", "prod")
 class SchedulerCommandLineRunner(private val appInitializerService: AppInitializerService) : CommandLineRunner {
     private val logger = KotlinLogging.logger {}
