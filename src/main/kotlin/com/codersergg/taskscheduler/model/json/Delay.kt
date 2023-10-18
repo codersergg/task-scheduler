@@ -31,11 +31,17 @@ abstract class AbstractDelay : Serializable {
 }
 
 data class Duration(
+    /**
+     * Task repetition delay in millisecondsш
+     */
     override val value: Long,
     override val type: String = DelayType.DURATION.string
 ) : AbstractDelay()
 
 data class Timer(
+    /**
+     * Frequency of task repetition in days
+     */
     override val value: Long,
     val zoneId: Int,
     val hours: Long,

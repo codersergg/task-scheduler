@@ -31,6 +31,9 @@ class Task(
     var createdAt: Instant = Instant.now(),
     @Column(name = "lastRun", nullable = false)
     var lastRun: Instant = Instant.EPOCH,
+    @Enumerated
+    @Column(name = "taskStatus", nullable = false)
+    var taskStatus: TaskStatus = TaskStatus.RUNNING,
     @Column(name = "type", nullable = false)
     var type: String,
 ) : BaseEntity<Long>() {
@@ -104,4 +107,9 @@ class Task(
         result = 31 * result + createdAt.hashCode()
         return result
     }
+}
+
+enum class TaskStatus(val string: String) {
+    RUNNING("Running"),
+    STOPPED("Stopped"),
 }
