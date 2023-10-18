@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "3.2.0-SNAPSHOT"
     id("io.spring.dependency-management") version "1.1.3"
+    id ("org.flywaydb.flyway") version "9.22.3"
     kotlin("jvm") version "1.9.10"
     kotlin("plugin.spring") version "1.9.10"
     kotlin("plugin.jpa") version "1.9.10"
@@ -76,7 +77,7 @@ dependencies {
 
     //runtimeOnly("com.h2database:h2")
     runtimeOnly("org.postgresql:postgresql")
-    //implementation("org.flywaydb:flyway-core")
+    implementation("org.flywaydb:flyway-core:9.22.3")
     implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
     implementation("joda-time:joda-time:2.12.5")
 
@@ -98,5 +99,6 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks.withType<Test> {
+    systemProperties["spring.profiles.active"] = "test"
     useJUnitPlatform()
 }
