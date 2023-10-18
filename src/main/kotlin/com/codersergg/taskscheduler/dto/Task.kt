@@ -1,5 +1,6 @@
 package com.codersergg.taskscheduler.dto
 
+import com.codersergg.taskscheduler.model.TaskStatus
 import com.codersergg.taskscheduler.model.json.AbstractDelay
 import com.codersergg.taskscheduler.model.json.PathResponse
 import java.io.Serializable
@@ -11,4 +12,5 @@ abstract class AbstractTask : Serializable {
     abstract val createdAt: Instant
     abstract val delay: AbstractDelay
     abstract val pathResponse: PathResponse
+    abstract var taskStatus: TaskStatus
 }

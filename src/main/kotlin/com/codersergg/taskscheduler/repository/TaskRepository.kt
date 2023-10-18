@@ -78,4 +78,5 @@ class TaskRepository(
 }
 
 @Repository
+@Transactional
 interface TaskRepositoryJpa : JpaRepository<Task, Long>

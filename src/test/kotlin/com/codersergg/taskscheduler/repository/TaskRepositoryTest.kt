@@ -4,6 +4,7 @@ import com.codersergg.taskscheduler.dto.ProviderType
 import com.codersergg.taskscheduler.dto.TaskType
 import com.codersergg.taskscheduler.model.Provider
 import com.codersergg.taskscheduler.model.Task
+import com.codersergg.taskscheduler.model.TaskStatus
 import com.codersergg.taskscheduler.model.json.Duration
 import com.codersergg.taskscheduler.model.json.RestPathResponse
 import kotlinx.coroutines.test.runTest
@@ -26,9 +27,8 @@ import java.net.URI
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 internal class TaskRepositoryTest
 @Autowired constructor(
-    val taskRepository: TaskRepository,
+    private val taskRepository: TaskRepository,
     providerRepositoryJpa: ProviderRepositoryJpa,
-    taskRepositoryJpa: TaskRepositoryJpa
 ) {
 
     companion object {
@@ -52,14 +52,11 @@ internal class TaskRepositoryTest
 
     init {
         if (providerRepositoryJpa.findAll().isEmpty()) {
-            val provider1 =
-                providerRepositoryJpa.save(Provider("provider name 1", type = ProviderType.DEFAULT_PROVIDER.string))
-            val provider2 =
-                providerRepositoryJpa.save(Provider("provider name 2", type = ProviderType.DEFAULT_PROVIDER.string))
-            val provider3 =
-                providerRepositoryJpa.save(Provider("provider name 3", type = ProviderType.DEFAULT_PROVIDER.string))
+            val provider1 = Provider("provider name 1", type = ProviderType.DEFAULT_PROVIDER.string)
+            val provider2 = Provider("provider name 2", type = ProviderType.DEFAULT_PROVIDER.string)
+            val provider3 = Provider("provider name 3", type = ProviderType.DEFAULT_PROVIDER.string)
 
-            taskRepositoryJpa.save(
+            taskRepository.createTask(
                 Task(
                     provider = provider1,
                     delay = Duration(5),
@@ -67,7 +64,7 @@ internal class TaskRepositoryTest
                     type = TaskType.DURATION_REST_TASK.string
                 )
             )
-            taskRepositoryJpa.save(
+            taskRepository.createTask(
                 Task(
                     provider = provider1,
                     delay = Duration(5),
@@ -75,7 +72,7 @@ internal class TaskRepositoryTest
                     type = TaskType.DURATION_REST_TASK.string
                 )
             )
-            taskRepositoryJpa.save(
+            taskRepository.createTask(
                 Task(
                     provider = provider1,
                     delay = Duration(5),
@@ -83,7 +80,7 @@ internal class TaskRepositoryTest
                     type = TaskType.DURATION_REST_TASK.string
                 )
             )
-            taskRepositoryJpa.save(
+            taskRepository.createTask(
                 Task(
                     provider = provider2,
                     delay = Duration(5),
@@ -91,7 +88,7 @@ internal class TaskRepositoryTest
                     type = TaskType.DURATION_REST_TASK.string
                 )
             )
-            taskRepositoryJpa.save(
+            taskRepository.createTask(
                 Task(
                     provider = provider3,
                     delay = Duration(5),
@@ -115,6 +112,9 @@ internal class TaskRepositoryTest
             // then
             Assertions.assertThat(taskResponse.id).isEqualTo(1)
             Assertions.assertThat(taskResponse.createdAt).isNotNull
+            Assertions.assertThat(taskResponse.provider.name).isEqualTo("provider name 1")
+            Assertions.assertThat(taskResponse.delay.value).isEqualTo(5L)
+            Assertions.assertThat(taskResponse.taskStatus).isEqualTo(TaskStatus.RUNNING)
         }
     }
 
@@ -160,8 +160,7 @@ internal class TaskRepositoryTest
             Assertions.assertThat(taskResponse.createdAt).isNotNull
             Assertions.assertThat(taskResponse.provider.name).isEqualTo(name)
             Assertions.assertThat(taskResponse.delay.value).isEqualTo(5000L)
-            //Assertions.assertThat(taskResponse.lastRun).isEqualTo(Instant.EPOCH)
-            //Assertions.assertThat(Instant.now()).isAfter(taskResponse.createdAt)
+            Assertions.assertThat(taskResponse.taskStatus).isEqualTo(TaskStatus.RUNNING)
         }
 
         @Test
@@ -184,8 +183,7 @@ internal class TaskRepositoryTest
             Assertions.assertThat(taskResponse.createdAt).isNotNull
             Assertions.assertThat(taskResponse.provider.name).isEqualTo(name)
             Assertions.assertThat(taskResponse.delay.value).isEqualTo(5000L)
-            //Assertions.assertThat(taskResponse.lastRun).isEqualTo(Instant.EPOCH)
-            //Assertions.assertThat(Instant.now()).isAfter(taskResponse.createdAt)
+            Assertions.assertThat(taskResponse.taskStatus).isEqualTo(TaskStatus.RUNNING)
         }
     }
 }

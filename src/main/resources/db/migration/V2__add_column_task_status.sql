@@ -1,0 +1,2 @@
+ALTER TABLE task
+    ADD COLUMN task_status SMALLINT DEFAULT '0' NOT NULL;
