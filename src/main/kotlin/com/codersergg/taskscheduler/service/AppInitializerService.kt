@@ -6,10 +6,7 @@ import com.codersergg.taskscheduler.repository.TaskRepository
 import com.codersergg.taskscheduler.scheduler.Scheduler
 import com.codersergg.taskscheduler.util.SchedulerHttpClient
 import io.github.oshai.kotlinlogging.KotlinLogging
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Service
 import java.net.URI
@@ -23,23 +20,25 @@ class AppInitializerService(
 ) {
 
     private val logger = KotlinLogging.logger {}
+
+    @OptIn(DelicateCoroutinesApi::class)
     suspend fun starting() {
         val isRegister = register()
         logger.info { "isRegister: $isRegister" }
         withContext(Dispatchers.IO) {
             val allTasks = taskRepository.getAllTasksNotRun()
-            allTasks.map {
+            allTasks.forEach { task ->
                 scheduler.run({
                     SchedulerHttpClient.sendRequest(
-                        it.pathResponse.path as URI,
+                        task.pathResponse.path as URI,
                         HttpMethod.POST,
-                        body = it.toAbstractTask()
+                        body = task.toAbstractTask()
                     )
-                }, it.toAbstractTask())
+                }, task.toAbstractTask())
             }
         }
 
-        withContext(Dispatchers.IO) {
+        GlobalScope.launch {
             while (isActive) {
                 updateLastActivity()
                 delay(applicationProperties.updateTime.toLong())
