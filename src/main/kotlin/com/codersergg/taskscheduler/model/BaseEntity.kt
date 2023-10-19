@@ -9,7 +9,7 @@ import java.time.Instant
 abstract class BaseEntity<T : Serializable> {
     @Id
     @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     var id: T? = null
 
     @Version
